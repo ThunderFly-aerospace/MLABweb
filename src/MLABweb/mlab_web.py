@@ -16,12 +16,23 @@ import datetime
 import calendar
 
 
-from handlers import *
+from handlers import github, admin
 from handlers import _sql, BaseHandler, basic
 
 
 tornado.options.define("port", default=10010, help="port", type=int)
 tornado.options.define("debug", default=True, help="debug mode")
+
+
+class all(BaseHandler):
+    def get(self, arg=None):
+        #self.write("ACK")
+        self.render("index.hbs",  _sql=_sql, parent=self)
+
+
+    def post(self, arg=None):
+        self.write("ACK")
+
 
 class WebApp(tornado.web.Application):
     def __init__(self, config={}):
@@ -32,14 +43,19 @@ class WebApp(tornado.web.Application):
         server_url = '{}:{}'.format(server, tornado.options.options.port)
 
         handlers =[
-            (r'/', WebHandler),
-            (r"/(.*)", WebHandler),
+            (r'/', all),
+            (r'/admin/', admin.home),
+            (r'/admin/module', admin.modules),
+            (r'/admin/module/new', all),
+            (r'/admin/module/edit(.*)', admin.module_edit),
+            (r'/api/mlab-repos/webhook', github.webhooks),
+            (r"/(.*)", all),
         ]
         settings = dict(
             cookie_secret="ROT13IrehaxnWrArwyrcfvQvixnAnFirgr",
-            #template_path= "/home/roman/repos/RTbolidozor/template/",
+            template_path= "/home/roman/repos/newMLAB/test-mlab-ui/src/MLABweb/template/",
             #static_path= "/home/roman/repos/RTbolidozor/static/",
-            xsrf_cookies=True,
+            xsrf_cookies=False,
             name=name,
             server_url=server_url,
             site_title=name,

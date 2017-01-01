@@ -1,0 +1,15 @@
+
+
+<div>
+	{% for category in _sql("SELECT id, id_parent, name_cs, name_en FROM MLAB.category;")%}
+			{{category[3]}}<br>
+	{% end %}
+
+</div>
+<hr>
+
+<div>
+	
+
+
+</div>

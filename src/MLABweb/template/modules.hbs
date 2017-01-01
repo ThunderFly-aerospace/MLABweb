@@ -1,0 +1,10 @@
+modules ...
+
+<hr>
+
+{% for module in _sql("SELECT module.id, module.name, module.long_name_cs, module.long_name_en, module.description_cs, category.id, category.name_cs FROM module INNER JOIN category on module.id_category = category.id;")%}
+
+{{module[2]}}  <a href="/admin/module/edit?name={{module[1]}}">edit {{module[1]}}</a>  <br>
+
+
+{% end %}

@@ -1,3 +1,24 @@
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+span.highlight {
+    background-color: yellow;
+}
+</style>
 
 
 <div>
@@ -7,7 +28,33 @@
 
 </div>
 <hr>
+<table>
+	<th>
+		<td>ModuleName</td>
+		<td>LongName</td>
+		<td>Description</td>
+		<td>Date</td>
+		<td>Author</td>
+		<td>     </td>
+		<td>Tags</td>
+	</th>
+	{#{% for module in _sql("SELECT * FROM MLAB.module JOIN MLAB.module_tag on MLAB.module_tag.id_module = MLAB.module.id ORDER BY MLAB.module.id;")%}#}
+	{% for module in _sql("SELECT * FROM MLAB.module ORDER BY MLAB.module.id;")%}
+	<tr>
+		<td>{{module[0]}}</td>
+		<td>{{module[3]}}</td>
+		<td>{{module[4]}}</td>
+		<td>{{module[5]}}</td>
+		<td>{{module[7]}}</td>
+		<td>{{module[8]}}</td>
+		<td></td>
 
+		<td>{% for tag in _sql("SELECT name, name_en, description_en FROM MLAB.module_tag JOIN MLAB.tags ON MLAB.tags.id = MLAB.module_tag.id_tag WHERE MLAB.module_tag.id_module = %s;" %(module[0]))  %} <span class="highlight">{{tag[1]}}</span> <small>{{tag[2]}}</small>{%end%}</td>
+	</tr>
+	{% end %}
+</table>
+</div>
+<hr>
 <div>
 	
 

@@ -53,7 +53,7 @@ class WebApp(tornado.web.Application):
         ]
         settings = dict(
             cookie_secret="ROT13IrehaxnWrArwyrcfvQvixnAnFirgr",
-            template_path= "/home/roman/repos/newMLAB/test-mlab-ui/src/MLABweb/template/",
+            template_path= "/home/roman/repos/test-mlab-ui/src/MLABweb/template/",
             #static_path= "/home/roman/repos/RTbolidozor/static/",
             xsrf_cookies=False,
             name=name,

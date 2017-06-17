@@ -22,12 +22,13 @@ span.highlight {
 
 
 <div>
-	{% for category in _sql("SELECT id, id_parent, name_cs, name_en FROM MLAB.category;")%}
+	{#{% for category in _sql("SELECT id, id_parent, name_cs, name_en FROM MLAB.category;")%}
 			{{category[3]}}<br>
-	{% end %}
+	{% end %}#}
 
 </div>
 <hr>
+{#
 <table>
 	<th>
 		<td>ModuleName</td>
@@ -38,7 +39,7 @@ span.highlight {
 		<td>     </td>
 		<td>Tags</td>
 	</th>
-	{#{% for module in _sql("SELECT * FROM MLAB.module JOIN MLAB.module_tag on MLAB.module_tag.id_module = MLAB.module.id ORDER BY MLAB.module.id;")%}#}
+	{% for module in _sql("SELECT * FROM MLAB.module JOIN MLAB.module_tag on MLAB.module_tag.id_module = MLAB.module.id ORDER BY MLAB.module.id;")%}
 	{% for module in _sql("SELECT * FROM MLAB.module ORDER BY MLAB.module.id;")%}
 	<tr>
 		<td>{{module[0]}}</td>
@@ -52,7 +53,7 @@ span.highlight {
 		<td>{% for tag in _sql("SELECT name, name_en, description_en FROM MLAB.module_tag JOIN MLAB.tags ON MLAB.tags.id = MLAB.module_tag.id_tag WHERE MLAB.module_tag.id_module = %s;" %(module[0]))  %} <span class="highlight">{{tag[1]}}</span> <small>{{tag[2]}}</small>{%end%}</td>
 	</tr>
 	{% end %}
-</table>
+</table>#}
 </div>
 <hr>
 <div>

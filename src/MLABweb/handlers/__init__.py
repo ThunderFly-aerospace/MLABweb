@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import MySQLdb as mdb
+
 import os
+import pymysql.cursors
+
 import tornado
 from requests_oauthlib import OAuth2Session
 
@@ -46,7 +49,16 @@ Subject: %s
 
 def _sql(query, read=False, db="MLAB"):
         print "#>", query
-        connection = mdb.connect(host="localhost", user="root", passwd="root", db=db, use_unicode=True, charset="utf8")
+        #connection = mdb.connect(host="localhost", user="root", passwd="root", db=db, use_unicode=True, charset="utf8", cursorclass=mdb.cursors.DictCursor)
+        
+
+        connection = pymysql.connect(host='localhost',
+                                     user='root',
+                                     password='root',
+                                     db=db,
+                                     charset='utf8',
+                                     cursorclass=pymysql.cursors.DictCursor)
+
         try:
             cursorobj = connection.cursor()
             result = None
@@ -55,6 +67,8 @@ def _sql(query, read=False, db="MLAB"):
             if not read:
                 connection.commit()
             connection.close()
+            #print "################################"
+            #print result
             return result
         except Exception, e:
                 print "Err", e

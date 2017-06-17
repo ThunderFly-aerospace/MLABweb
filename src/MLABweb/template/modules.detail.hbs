@@ -1,0 +1,97 @@
+
+{% extends "base.hbs" %}
+{% block content %}
+
+<style type="text/css">
+  .card{
+    margin-bottom: 15px;
+  }
+  .card-gallery{
+
+    margin: 0px;
+    padding: 0px;
+  }
+
+</style>
+
+<script type="text/javascript">
+    
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+    event.preventDefault();
+    $(this).ekkoLightbox();
+});
+
+
+</script>
+
+
+<nav class="breadcrumb">
+  <a class="breadcrumb-item" href="/">Home</a>
+  <a class="breadcrumb-item" href="/modules/">modules</a>
+  <span class="breadcrumb-item active">{{module_data['name']}}</span>
+</nav>
+
+{%for cat in _sql("SELECT * FROM Categories INNER JOIN module_to_category ON module_to_category.category = Categories.id WHERE module_to_category.module = '%s';" %(module_data['id'])) %}
+{{cat['name_cs']}}
+{%end%}
+
+<div class="container">
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+
+      {% if not module_data['image']%}
+      <img class="card-img-top" src="/src/static/noimage.png" data-src="/repos/{{module_data['root']}}/DOC/SRC/img/{{module_data['name']}}_Top_Big.jpg" alt="madule">
+      {% else %}
+      <img class="card-img-top" src="/src/static/noimage.png" data-src="/repos/{{module_data['root']}}/{{module_data['image']}}" alt="Module">
+      {% end %}
+
+      <div class="card-block">
+        <h2 class="card-title">{{module_data['name']}}</h2>
+        <h4 class="card-subtitle mb-2 text-muted">{{module_data['longname_cs']}}</h4>
+        <!-- <h4 class="card-subtitle mb-2 text-muted">{{module_data['longname_en']}}</h4> -->
+        <p class="card-text">{{module_data['short_cs']}}</p>
+
+        <hr>
+        <a href="https://github.com/MLAB-project/Modules/tree/master/{{module_data['root']}}"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>
+
+        {% if module_data['wiki'] != None %} <a href="{{module_data['wiki']}}"><i class="fa fa-book fa-2x" aria-hidden="true"></i></a> {% end %}
+        {% if module_data['ust'] %} <a href="{{module_data['ust']}}"><i class="fa fa-shopping-basket fa-2x" aria-hidden="true"></i></a> {% end %}
+        <a href="edit"><i class="fa fa-pencil fa-2x" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6">
+    <div class="card"  style="border-color: #fff;">
+      <div class="card-block card-gallery">
+        {# {{images}} #}
+        {% for image in images %}
+            <a href="/repos/{{image[26:]}}" data-toggle="lightbox" data-gallery="example-gallery">
+                <img src="/repos/{{image[26:]}}" class="img-thumbnail rounded" width="30%">
+            </a>
+        {% end %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-block">
+        <p class="card-text"></p>
+        {% raw module_data['doc_cs'] %}
+        <hr>
+        <br>
+        <hr>
+        {% raw module_data['doc_en'] %}
+      </div>
+    </div>
+  </div>
+
+</div>
+</div> <!-- containte -->
+
+
+
+
+{% end %}

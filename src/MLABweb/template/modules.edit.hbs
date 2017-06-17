@@ -1,9 +1,203 @@
-modules - edit ...
+{% extends "base.hbs" %}
+{% block content %}
 
-<form>
-	{% for sensor_prop in sensor[0]%}
-		{{sensor_prop}}<br>
-	{% end %}
+<style type="text/css">
+  .classTable1{
+    border: black solid;
+  }
+
+</style>
 
 
-</form>
+  <script>
+  tinymce.init({
+    selector: '#doc_cs',
+    menubar: false,
+    toolbar_items_size: 'small',
+    plugins: "pagebreak table autoresize link image code fullscreen",
+    relative_urls: true,
+    autoresize_min_height: 350,
+    autoresize_max_height: 500,
+    toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pagebreak table image code | removeformat tools fullscreen",
+    pagebreak_separator: "<!-- break -->"
+  });
+  </script>
+
+
+  <script>
+  tinymce.init({
+    selector: '#doc_en',
+    menubar: false,
+    toolbar_items_size: 'small',
+    plugins: "pagebreak table autoresize link image code fullscreen",
+    relative_urls: true,
+    autoresize_min_height: 350,
+    autoresize_max_height: 500,
+    toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pagebreak table image code | removeformat tools fullscreen",
+    pagebreak_separator: "<!-- break -->"
+  });
+  </script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+    $("#save").click(function(event) {
+        $.post("edit",
+        {
+            name: document.getElementById('name').value,
+            root: document.getElementById('root').value,
+            wiki: document.getElementById('wiki').value,
+            ust: document.getElementById('ust').value,
+            image: document.getElementById('image').value,
+            status: document.getElementById('status').value,
+            autor: null,
+            category: null,
+            longname_cs: document.getElementById('longname_cs').value,
+            longname_en:  document.getElementById('longname_en').value,
+            short_cs: document.getElementById('short_cs').value,
+            short_en:  document.getElementById('short_en').value,
+            doc_cs: window.parent.tinymce.get('doc_cs').getContent(),
+            doc_en:  window.parent.tinymce.get('doc_en').getContent(),
+        },
+        function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });
+    });
+    });
+
+</script>
+
+{%if not module_data %}
+<h2>Nový modul</h2>
+{% else %}
+<h2>Úprava existujícího modulu: <i> {{module_data['name']}} </i></h2>
+{% end %}
+
+    <form method="post" action="">
+        <div class="form-group">
+          <label name="post-title" for="name">Název</label>
+          <input type="text" class="form-control" id="name" {% if module_data%} value = "{{module_data['name']}}" disabled="" {%end %}></input>
+        </div>
+        <div class="form-group">
+          <label name="post-title" for="root">Root</label>
+          <input type="text" class="form-control" id="root" {% if module_data%} value = "{{module_data['root']}}" disabled="" {%end %}></input>
+        </div>
+        <div class="form-group">
+          <label name="post-title" for="wiki">Wiki</label>
+          <input type="text" class="form-control" id="wiki" {% if module_data%} value = "{{module_data['wiki']}}" {%end %}></input>
+        </div>
+        <div class="form-group">
+          <label name="post-title" for="ust">UST</label>
+          <input type="text" class="form-control" id="ust" {% if module_data%} value = "{{module_data['ust']}}" {%end %}></input>
+        </div>
+        <div class="form-group">
+          <label name="post-title" for="image">IMAGE</label>
+              <div class="input-group">
+                <!-- <input type="text" class="form-control" id="image" {% if module_data%} value = "{{module_data['image']}}" {%end %}></input> -->
+   
+                <select class="form-control custom-select" id="image">
+                  <option value=""> -- Vyberte obrázek --</option>
+                        {% for image in images %}
+                    
+                        <option value='{{"/".join(image.split("/")[7:])}}' {% if module_data['image'] == "/".join(image.split("/")[7:]) %} selected {%end%}>{{"/".join(image.split("/")[7:])}}</option>
+                    
+                        {%end%}
+                </select>
+          </div>
+        </div>
+
+
+        <div class="form-group">
+
+        <div class="form-group">
+        <label name="post-title" for="exampleSelect2">Autoři</label>
+        <select multiple class="form-control" id="exampleSelect2">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+        </div>
+        <div class="form-group">
+        <label name="post-title" for="status">Status</label>
+        <select class="form-control custom-select" id="status">
+          <option value="0" {% if module_data['status'] == 0 %} selected {% end %}>Návrh</option>
+          <option value="1" {% if module_data['status'] == 1 %} selected {% end %}>V přípravě</option>
+          <option value="2" {% if module_data['status'] == 2 %} selected {% end %}>Produkce</option>
+          <option value="3" {% if module_data['status'] == 3 %} selected {% end %}>Nahrazen</option>
+          <option value="4" {% if module_data['status'] == 4 %} selected {% end %}>Starý</option>
+        </select>
+        </div>
+        <div class="form-group">
+        <label name="post-title" for="exampleSelect2">Kategorie</label>
+        <select multiple class="form-control" id="exampleSelect2">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+        </div>
+        
+        
+        <br>
+        <ul class="nav nav-tabs" role="tablist">
+         <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" role="tab" href="#cs_CZ">cs_CZ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" role="tab" href="#en_US">en_US</a>
+          </li>
+        </ul>
+        
+        <br>
+        <div class="tab-content">
+            <div class="tab-pane active" id="cs_CZ" role="tabpanel">
+              <h2>Česky</h2>
+                <div class="form-group">
+                  <label name="post-title" for="post-title">Dlouhý název</label>
+                  <input type="text" class="form-control" id="longname_cs" {% if module_data%} value = "{{module_data['longname_cs']}}" {%end %}></input>
+                </div>
+                <div class="form-group">
+                  <label name="post-title" for="post-title">Krátký popis</label>
+                  <input type="text" class="form-control" id="short_cs" rows="5" {% if module_data%} value = "{{module_data['short_cs']}}" {%end %}></input>
+                </div>
+                <div class="form-group">
+                  <label name="post-title" for="post-title">Detailní popis</label><br>
+                  <textarea id="doc_cs" class="form-control">{% if module_data%} {{module_data['doc_cs']}} {%end %}</textarea>
+                </div>
+            </div>
+            <div class="tab-pane" id="en_US" role="tabpanel">
+              <h2>English</h2>
+               <div class="form-group">
+                  <label name="post-title" for="post-title">Dlouhý název</label>
+                  <input type="text" class="form-control" id="longname_en" {% if module_data %} value = "{{module_data['longname_en']}}" {%end %}></input>
+              </div>
+                <div class="form-group">
+                  <label name="post-title" for="post-title">Krátký popis</label>
+                  <input type="text" class="form-control" id="short_en" rows="5" {% if module_data %} value = "{{module_data['short_en']}}" {%end %}></input>
+                </div>
+                <div class="form-group">
+                  <label name="post-title" for="post-title">Detailní popis</label><br>
+                  <textarea id="doc_en" class="form-control">{% if module_data%} {{module_data['doc_en']}} {%end %}</textarea>
+                </div>
+            </div>
+        </div>
+        <input type="button" value="Uložit" id="save"  class="btn btn-primary">
+        {% if module_data%}
+        <input type="button" value="Zpět na {{module_data['name']}}" onclick="javascript:location.href='/module/{{module_data['name']}}/'"  class="btn btn-secondary">
+        {% else %}
+        <input type="button" value="Zpět na seznam modulů" onclick="javascript:location.href='/modules'"  class="btn btn-secondary">
+        {% end %}
+
+    </form>
+
+
+  </div>
+</div>
+
+
+
+{% end %}

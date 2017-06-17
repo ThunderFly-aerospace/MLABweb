@@ -1,0 +1,16 @@
+[submodule "src/MLABweb/static/tinymce-dist"]
+	path = src/MLABweb/static/tinymce-dist
+	url = git@github.com:tinymce/tinymce-dist.git
+[submodule "src/MLABweb/static/bootstrap"]
+	path = src/MLABweb/static/bootstrap
+	url = git@github.com:twbs/bootstrap.git
+	branch = v4-dev
+[submodule "src/MLABweb/static/jquery"]
+	path = src/MLABweb/static/jquery
+	url = git@github.com:jquery/jquery.git
+[submodule "src/MLABweb/static/tether"]
+	path = src/MLABweb/static/tether
+	url = git@github.com:HubSpot/tether.git
+[submodule "src/MLABweb/static/unveil"]
+	path = src/MLABweb/static/unveil
+	url = git@github.com:luis-almeida/unveil.git

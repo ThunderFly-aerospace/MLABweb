@@ -43,18 +43,30 @@ class WebApp(tornado.web.Application):
         server_url = '{}:{}'.format(server, tornado.options.options.port)
 
         handlers =[
-            (r'/', all),
+            (r'/', admin.modules),
+            (r'/module/(.*)/edit', admin.module_edit),
+            (r'/module/(.*)/', admin.module_detail),
+            (r'/module/(.*)', admin.module_detail),
+            (r'/module/', admin.modules),
+            (r'/module', admin.modules),
+            (r'/modules/(.*)/', admin.modules),
+            (r'/modules/(.*)', admin.modules),
+            (r'/modules', admin.modules),
             (r'/admin/', admin.home),
             (r'/admin/module', admin.modules),
+            (r'/admin/modules', admin.modules),
             (r'/admin/module/new', all),
             (r'/admin/module/edit(.*)', admin.module_edit),
             (r'/api/mlab-repos/webhook', github.webhooks),
+            (r'/favicon.ico', tornado.web.StaticFileHandler, {'path': "/static/"}),
+            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': '/home/roman/repos/test-mlab-ui/src/MLABweb/static/'}),
+            (r'/repos/(.*)', tornado.web.StaticFileHandler, {'path': '/home/roman/repos/Modules/'}),
             (r"/(.*)", all),
         ]
         settings = dict(
             cookie_secret="ROT13IrehaxnWrArwyrcfvQvixnAnFirgr",
             template_path= "/home/roman/repos/test-mlab-ui/src/MLABweb/template/",
-            #static_path= "/home/roman/repos/RTbolidozor/static/",
+            static_path= "/home/roman/repos/test-mlab-ui/src/MLABweb/static/",
             xsrf_cookies=False,
             name=name,
             server_url=server_url,

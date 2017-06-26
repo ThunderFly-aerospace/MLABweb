@@ -1,0 +1,96 @@
+\documentclass[12pt,a4paper,oneside]{article}
+\usepackage[colorlinks=true, unicode]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{pdfpages}
+%\usepackage{newpxtext,newpxmath}
+\usepackage{pgf}
+\usepackage[total={17cm,25cm}, top=3cm, includefoot]{geometry}
+
+
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+ 
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{MLAB}
+\rhead{$title-meta$}
+\rfoot{Page \thepage}
+
+
+
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+
+\usepackage{hyperref}
+
+
+\urlstyle{same}  % don't use monospace font for urls
+
+
+\usepackage{longtable,booktabs}
+
+
+\title{$title$}
+
+$if(subtitle)$
+\providecommand{\subtitle}[1]{}
+\subtitle{$subtitle$}
+$endif$
+
+\author{$for(author)$$author$$sep$, $endfor$}
+\date{$date$}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+
+
+\thispagestyle{empty}
+\maketitle
+
+\begin{abstract}
+$abstract$
+
+\end{abstract}
+
+\begin{figure} [htbp]
+\begin{center}
+%\includegraphics [width=100mm] {$TopImage$} 
+\end{center}
+\end{figure}
+
+\begin{figure} [b]
+%includegraphics [width=25mm] {$QR$} 
+\end{figure}
+
+\newpage
+\tableofcontents
+$QR$
+
+\maketitle
+
+
+$body$
+
+
+\end{document}

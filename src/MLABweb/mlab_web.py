@@ -8,6 +8,7 @@ from tornado import escape
 from tornado import httpserver
 from tornado import options
 from tornado import web
+import functools
 import json
 #import sqlite3
 import MySQLdb as mdb
@@ -16,7 +17,7 @@ import datetime
 import calendar
 
 
-from handlers import github, admin
+from handlers import github, admin, auth
 from handlers import _sql, BaseHandler, basic
 
 
@@ -44,11 +45,13 @@ class WebApp(tornado.web.Application):
 
         handlers =[
             (r'/', admin.modules),
+            (r'/module/(.*)/edit/', admin.module_edit),
             (r'/module/(.*)/edit', admin.module_edit),
             (r'/module/(.*)/', admin.module_detail),
             (r'/module/(.*)', admin.module_detail),
             (r'/module/', admin.modules),
             (r'/module', admin.modules),
+            (r'/modules/all', admin.modules_overview),
             (r'/modules/(.*)/', admin.modules),
             (r'/modules/(.*)', admin.modules),
             (r'/modules', admin.modules),
@@ -57,10 +60,24 @@ class WebApp(tornado.web.Application):
             (r'/admin/modules', admin.modules),
             (r'/admin/module/new', all),
             (r'/admin/module/edit(.*)', admin.module_edit),
+
+            (r'/PermaLink/(.*)', admin.permalink),
+
+            (r'/login/oauth/github', auth.O_github),
+            (r'/login/newuser', auth.newuser),
+            (r'/login/', auth.O_login),
+            (r'/login', auth.O_login),
+            (r'/logout/', auth.O_logout),
+            (r'/logout', auth.O_logout),
+
+
             (r'/api/mlab-repos/webhook', github.webhooks),
+
+            #staticke soubory je vhodne nahradit pristupem primo z proxy serveru. (pak to tolik nevytezuje tornado)
             (r'/favicon.ico', tornado.web.StaticFileHandler, {'path': "/static/"}),
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': '/home/roman/repos/test-mlab-ui/src/MLABweb/static/'}),
             (r'/repos/(.*)', tornado.web.StaticFileHandler, {'path': '/home/roman/repos/Modules/'}),
+            (r'/git/hook/', github.webhooks),
             (r"/(.*)", all),
         ]
         settings = dict(
@@ -78,7 +95,7 @@ class WebApp(tornado.web.Application):
             debug=tornado.options.options.debug,
             autoreload=True
         )
-
+        tornado.locale.load_translations("/home/roman/repos/test-mlab-ui/src/MLABweb/locale/")
         tornado.web.Application.__init__(self, handlers, **settings)
 
 def main():
@@ -89,6 +106,8 @@ def main():
     http_server = tornado.httpserver.HTTPServer(WebApp())
     http_server.listen(tornado.options.options.port)
     tornado.ioloop.IOLoop.instance().start()
+    #http_server.start(4)
+
 
 
 if __name__ == "__main__":

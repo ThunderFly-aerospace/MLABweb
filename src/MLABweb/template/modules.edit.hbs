@@ -43,6 +43,7 @@
 
     $(document).ready(function() {
     $("#save").click(function(event) {
+        $('#waitmodal').modal('show');
         $.post("edit",
         {
             name: document.getElementById('name').value,
@@ -61,12 +62,23 @@
             doc_en:  window.parent.tinymce.get('doc_en').getContent(),
         },
         function(data, status){
-            alert("Data: " + data + "\nStatus: " + status);
+
+            $('#waitmodal').modal('hide');
+            alert("Data: " + data + "\nStatus: " + status+'\n Dokončeno');
         });
     });
     });
 
+
+$('.selectpicker').selectpicker({
+  style: 'btn-info',
+  size: 4
+});
+
+
+
 </script>
+
 
 {%if not module_data %}
 <h2>Nový modul</h2>
@@ -92,7 +104,7 @@
           <input type="text" class="form-control" id="ust" {% if module_data%} value = "{{module_data['ust']}}" {%end %}></input>
         </div>
         <div class="form-group">
-          <label name="post-title" for="image">IMAGE</label>
+          <label name="post-title" for="image">Image</label>
               <div class="input-group">
                 <!-- <input type="text" class="form-control" id="image" {% if module_data%} value = "{{module_data['image']}}" {%end %}></input> -->
    
@@ -108,11 +120,12 @@
         </div>
 
 
+
         <div class="form-group">
 
         <div class="form-group">
-        <label name="post-title" for="exampleSelect2">Autoři</label>
-        <select multiple class="form-control" id="exampleSelect2">
+        <label name="post-title" for="authors">Autoři (zatím nefunkční)</label>
+        <select  class="selectpicker" id="authors">
           <option>1</option>
           <option>2</option>
           <option>3</option>
@@ -120,6 +133,15 @@
           <option>5</option>
         </select>
         </div>
+        
+        --<br>
+        {% for user in _sql("SELECT * FROM Users ORDER BY ID") %}
+        {{user['name']}}<br>
+        {% end %}
+        --
+
+
+
         <div class="form-group">
         <label name="post-title" for="status">Status</label>
         <select class="form-control custom-select" id="status">
@@ -131,8 +153,8 @@
         </select>
         </div>
         <div class="form-group">
-        <label name="post-title" for="exampleSelect2">Kategorie</label>
-        <select multiple class="form-control" id="exampleSelect2">
+        <label name="post-title" for="exampleSelect2">Kategorie (zatím nefunkční)</label>
+        <select multiple class="form-control " id="exampleSelect2">
           <option>1</option>
           <option>2</option>
           <option>3</option>
@@ -197,6 +219,25 @@
 
   </div>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="waitmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Čekejte na dokončení</h5>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 
 

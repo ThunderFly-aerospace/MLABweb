@@ -31,6 +31,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.css" />
 
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+
+
+
     <script type="text/javascript">
       $(document).ready(function() {
         $("img").unveil(2000);
@@ -39,7 +45,7 @@
       $("<img/>")
           .on('load', function() { console.log("image loaded correctly"); })
           .on('error', function() { console.log("error loading image"); })
-          .attr("src", $(originalImage).attr("src"))
+          .attr("src", $("originalImage").attr("src"))
       ;
     </script>
 
@@ -80,13 +86,44 @@
         transition: opacity .3s ease-in;
       } 
 
+      .status{
+        height: 0.75em;
+        width: 100%;
+      }
+
+      .status-0{
+        background-color: #d7ccc8;
+      }
+      .status-1{
+        background-color: #ffeb3b;
+      }
+
+      .status-2{
+        background-color: #8bc34a;
+      }
+
+      .status-3{
+        background-color: #ffc107;
+      }
+
+      .status-4{
+        background-color: #f44336;
+      }
+
+
+      </style>
+
+  <script type="text/javascript">
+    
+
       $("img").unveil(200, function() {
         $(this).load(function() {
           this.style.opacity = 1;
         });
       });
 
-      </style>
+
+  </script>
 
     
   {% block head %}{% end %}
@@ -98,16 +135,19 @@
 
   <div class="container">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="/">Home</a></li>
-          <li><a href="/modules/">Modules</a>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
+          <li class="active"><a href="/">{{ _("Home")}}</a></li>
+          <li><a href="/modules/">{{ _("Modules")}}</a>
+          <li><a href="#">{{ _("About")}}</a></li>
+          <li><a href="#">{{ _("Contact")}}</a></li>
+          <li>{%if current_user %} <a href="/logout/">{{ _("Log out")}} {{current_user['name']}} {%else%} <a href="/login/"> {{ _("Log in") }} {%end%}</a></li>
         </ul>
         <h3 class="muted"><a href="/"><img src="/static/logo.png" height="35pt" alt="MLAB"></img></a></h3>
         </div>
       </div>
 
       <hr>
+      {{_("Lang")}}
+      {{locale.name}}
 
 
 

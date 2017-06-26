@@ -33,30 +33,6 @@
 }
 
 
-.status{
-	height: 0.75em;
-	width: 100%;
-}
-
-.status-0{
-	background-color: lightgray;
-}
-.status-1{
-	background-color: yellow;
-}
-
-.status-2{
-	background-color: green;
-}
-
-.status-3{
-	background-color: orange;
-}
-
-.status-4{
-	background-color: red;
-}
-
 a.selected{
 	font-weight: bold;
 }
@@ -65,19 +41,49 @@ a.selected{
 
 
 <h3> kategorie {{category}}</h3> 
-<ul class="columns">
-{% for cat in _sql("SELECT* FROM Categories ORDER by name;")%}
-	<li> <a href="/modules/{{cat['name']}}/" class="{%if category == cat['name']%}selected{%end%}">{{cat['name_cs']}}</a></li>
 
-{% end %}
-</ul>
-<br>
+<div class="card" style="margin-left: -15px; margin-right: -15px;">
+  <div class="card-block">
+	<ul class="columns">
+	{% for cat in _sql("SELECT* FROM Categories ORDER by name;")%}
+		<li> <a href="/modules/{{cat['name']}}/" class="{%if category == cat['name']%}selected{%end%}">{{cat['name_cs']}}</a></li>
 
-{% if category %}
-	{% set modules = _sql("SELECT * FROM `MLAB`.`module_to_category` INNER JOIN MLAB.Modules ON Modules.id = module_to_category.module WHERE `category` = (SELECT id from `MLAB`.`Categories` WHERE `Categories`.`name` = '%s' ORDER by name);" %(category)) %}
-{% else %}
-	{% set modules = _sql("SELECT * FROM Modules ORDER by name;") %}
-{% end %}
+	{% end %}
+	</ul>
+  </div>
+</div>
+
+<p style="margin-left: -15px; margin-right: -15px;">
+  <a class="btn btn-secondary" data-toggle="collapse" href="#filter" aria-expanded="false" aria-controls="filter">
+    Filtr
+  </a>
+  
+</p>
+<div class="collapse" id="filter" >
+  <div class="card card-block" style="margin-left: -15px; margin-right: -15px;">
+  	<form method="GET">
+	<div class="row">
+		<div class="col-sm-3">
+			<h5>Status</h5>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="0" {% if status and '0' in status %} checked {%end%}><span class="status status-0" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  Návrh </label></div>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="1" {% if status and '1' in status %} checked {%end%}><span class="status status-1" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  V přípravě</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="2" {% if status and '2' in status %} checked {%end%}><span class="status status-2" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  Produkce</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="3" {% if status and '3' in status %} checked {%end%}><span class="status status-3" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  Nahrazen</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="4" {% if status and '4' in status %} checked {%end%}><span class="status status-4" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  Starý</label></div>
+
+
+		</div>
+		<div class="col-sm-3">
+
+		</div>
+		<div class="col-sm-3">
+
+		</div>
+	</div>
+	<input type="submit" value="Submit">
+	</form>
+  </div>
+</div>
 
 
 <div class="row">
@@ -88,9 +94,9 @@ a.selected{
     <div class="card">
     	<a href="/module/{{module['name']}}/">
     	{% if not module['image']%}
-    	<img class="card-img-top" src="/src/static/noimage.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['name']}}_Top_Big.jpg" alt="{{module['name']}}">
+    	<img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['name']}}_Top_Big.jpg" alt="{{module['name']}}">
     	{% else %}
-    	<img class="card-img-top" src="/src/static/noimage.png" data-src="/repos/{{module['root']}}/{{module['image']}}" alt="{{module['name']}}">
+    	<img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/{{module['image']}}" alt="{{module['name']}}">
     	{% end %}
     	</a>
 		<div class="status status-{{module['status']}}"></div>
@@ -101,9 +107,10 @@ a.selected{
 			{{module['short_cs']}}
 		</p>
 		</div>
+		{%if current_user and current_user['is_staff'] %}
 	    <div class="card-footer">
-	      <small class="text-muted"><a href="/module/{{module['name']}}/">View</a> <a href="/module/{{module['name']}}/edit">edit</a></small>
-	    </div>
+	      <small class="text-muted"><a href="/module/{{module['name']}}/edit">edit</a></small>
+	    </div>{%end%}
 	</div>
 </div>
 {% end %}

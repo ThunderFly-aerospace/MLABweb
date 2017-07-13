@@ -21,30 +21,37 @@
 	
 	<table class="table table-striped table-hover table-sm">
 
-	<th>#</th>
-	<th>Název</th>
-	<th>Složka</th>
-	<th>Autor</th>
-	<th>Obrázek</th>
-	<th>wiki</th>
-	<th>ust</th>
-	<th>cs jmeno</th>
-	<th>cs perex</th>
-	<th>cs doc</th>
-	<th>en jmeno</th>
-	<th>en perex</th>
-	<th>en doc</th>
-	<th>type</th>
-	{%for module in modules%}
+
+	{%for i, module in enumerate(modules)%}
+
+		{% if i % 51 ==0 %}
+			<tr><th>#</th>
+			<th>Název</th>
+			<th>Složka</th>
+			<th>Autor</th>
+			<th>Obrázek</th>
+			<th>wiki</th>
+			<th>ust</th>
+			<th>cs jmeno</th>
+			<th>cs perex</th>
+			<th>cs doc</th>
+			<th>en jmeno</th>
+			<th>en perex</th>
+			<th>en doc</th>
+			<th>type</th></tr>
+		{% end %}
+
 		<tr>
 			{#<div class="module">{{module['name']}}{{module}} <small>edit</small></div>#}
 			<td class="status-{{module['status']}}">{{module['id']}}</td>
 			<td><b><a href="/module/{{module['name']}}/">{{module['name']}}</a>  <small><a href="/module/{{module['name']}}/edit/">edit</a></small></b></td>
 			<td><small>{{module['root']}}</small></td>
 			<td>{%for user in _sql("select Users.name from module_to_user INNER JOIN Users ON Users.id = module_to_user.user where module = %i;"%module['id'])%} {{user['name']}}, {%end%}</td>
-			<td  data-toggle="tooltip" data-placement="top" title="{{module['image']}}"> <input type="checkbox" {% if module['image']%} checked {%end%} disabled></td>
-			<td  data-toggle="tooltip" data-placement="top" title="{{module['wiki']}}"> <input type="checkbox" {% if module['wiki']%} checked {%end%} disabled></td>
-			<td  data-toggle="tooltip" data-placement="top" title="{{module['ust']}}"> <input type="checkbox" {% if module['ust']%} checked {%end%} disabled></td>
+			<td  data-toggle="tooltip" data-placement="top" title="{{module['image']}}">{% if module['image'] and len(module['image']) > 10 %}<a href="/repos/{{module['root']}}/{{module['image']}}"><i class="fa fa-check" aria-hidden="true"></i></a> {% else %}<i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
+
+			<td  data-toggle="tooltip" data-placement="top" title="{{module['wiki']}}">{% if module['wiki'] and len(module['wiki']) > 10 %}<a href="{{module['wiki']}}"><i class="fa fa-check" aria-hidden="true"></i></a> {% else %}<i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
+
+			<td  data-toggle="tooltip" data-placement="top" title="{{module['ust']}}"> {% if module['ust'] and len(module['ust']) > 10 %}<a href="{{module['ust']}}"><i class="fa fa-check" aria-hidden="true"></i></a> {% else %}<i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
 			{% if module['longname_cs']%}<td>{{len(module['longname_cs'])}}{%else%}<td><i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
 			{% if module['short_cs']   %}<td>{{len(module['short_cs'])}}{% else %}<td><i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
 			{% if module['doc_cs']     %}<td>{{len(module['doc_cs'])}}{% else %}<td><i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
@@ -52,7 +59,7 @@
 			{% if module['short_en']   %}<td>{{len(module['short_en'])}}{% else %}<td><i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
 			{% if module['doc_en']     %}<td>{{len(module['doc_en'])}}{% else %}<td><i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
 			<td>{{module['type']}}</td>
-		</td>
+		</tr>
 	{% end %}
 	</table>
 

@@ -14,3 +14,6 @@
 [submodule "src/MLABweb/static/unveil"]
 	path = src/MLABweb/static/unveil
 	url = git@github.com:luis-almeida/unveil.git
+[submodule "src/MLABweb/static/WOW"]
+	path = src/MLABweb/static/WOW
+	url = git@github.com:matthieua/WOW.git

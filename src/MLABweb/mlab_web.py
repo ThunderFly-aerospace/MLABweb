@@ -44,9 +44,11 @@ class WebApp(tornado.web.Application):
         server_url = '{}:{}'.format(server, tornado.options.options.port)
 
         handlers =[
-            (r'/', admin.modules),
+            (r'/', admin.home),
             (r'/module/(.*)/edit/', admin.module_edit),
             (r'/module/(.*)/edit', admin.module_edit),
+            (r'/module/(.*)/compare/', admin.module_comapare),
+            (r'/module/(.*)/compare', admin.module_comapare),
             (r'/module/(.*)/', admin.module_detail),
             (r'/module/(.*)', admin.module_detail),
             (r'/module/', admin.modules),
@@ -70,8 +72,7 @@ class WebApp(tornado.web.Application):
             (r'/logout/', auth.O_logout),
             (r'/logout', auth.O_logout),
 
-
-            (r'/api/mlab-repos/webhook', github.webhooks),
+            (r'/git/hook', github.webhooks),
 
             #staticke soubory je vhodne nahradit pristupem primo z proxy serveru. (pak to tolik nevytezuje tornado)
             (r'/favicon.ico', tornado.web.StaticFileHandler, {'path': "/static/"}),

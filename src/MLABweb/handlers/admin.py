@@ -5,6 +5,7 @@
 import tornado
 import json
 import glob
+import glob2
 import time
 #from tornado import web
 from tornado import ioloop
@@ -20,11 +21,12 @@ from git import Repo, Actor
 
 import re
 from six.moves.html_parser import HTMLParser
+from w3lib.html import replace_entities
 from xhtml2pdf import pisa 
 import StringIO
 import pypandoc
 from . import _sql, BaseHandler, sendMail
-import hjson
+import subprocess
 
 
 class permalink(BaseHandler):
@@ -37,7 +39,8 @@ class permalink(BaseHandler):
 class home(BaseHandler):
     @asynchronous
     def get(self):
-        self.render("index.hbs",  _sql=_sql, parent=self)
+        module_data = _sql("SELECT * FROM MLAB.Modules WHERE status='2' ORDER by name")
+        self.render("index.hbs",  _sql=_sql, parent=self, modules = module_data)
 
 class module_detail(BaseHandler):
     @asynchronous
@@ -45,7 +48,17 @@ class module_detail(BaseHandler):
         print module
         #self.write("ahoj")
         module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
-        self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = glob.glob("/home/roman/repos/Modules/"+module_data['root']+"/DOC/SRC/img/*"))
+        self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = glob.glob("/home/roman/repos/Modules/"+module_data['root']+"/DOC/SRC/img/*"), documents = glob2.glob("/home/roman/repos/Modules/"+module_data['root']+"//**/*.pdf"))
+
+class module_comapare(BaseHandler):
+    @asynchronous
+    def get(self, module = None):
+        print module, "< compare"
+        module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
+
+        doc_cs = open('/home/roman/repos/Modules/'+module_data['root']+'/DOC/SRC/module.cs.html').read()
+        doc_en = open('/home/roman/repos/Modules/'+module_data['root']+'/DOC/SRC/module.en.html').read()
+        self.render("modules.compare.hbs", _sql=_sql, module=module, module_data=module_data, doc_cs=doc_cs, doc_en=doc_en)
 
 class modules(BaseHandler):
     @asynchronous
@@ -124,11 +137,10 @@ class module_edit(BaseHandler):
         data = self.request.arguments
         #print "##################################################33"
 
-        dotaz = "UPDATE `MLAB`.`Modules` SET `wiki`='%s', `ust`='%s', `longname_cs`='%s', `longname_en`='%s', `short_cs`='%s', `short_en`='%s', `doc_cs`='%s', `doc_en`='%s', image = '%s', status = '%s' WHERE `name`='%s';"  %(self.get_argument('wiki'), self.get_argument('ust'), self.get_argument('longname_cs'), self.get_argument('longname_en'), self.get_argument('short_cs'), self.get_argument('short_en'), self.get_argument('doc_cs'), self.get_argument('doc_en'), self.get_argument('image'), self.get_argument('status'), self.get_argument('name'))
+        dotaz = "UPDATE `MLAB`.`Modules` SET `wiki`='%s', `ust`='%s', `longname_cs`='%s', `longname_en`='%s', `short_cs`='%s', `short_en`='%s', `doc_cs`='%s', `doc_en`='%s', image = '%s', status = '%s' WHERE `name`='%s';"  %(self.get_argument('wiki').strip(), self.get_argument('ust').strip(), self.get_argument('longname_cs'), self.get_argument('longname_en'), self.get_argument('short_cs'), self.get_argument('short_en'), self.get_argument('doc_cs'), self.get_argument('doc_en'), self.get_argument('image').strip(), self.get_argument('status').strip(), self.get_argument('name').strip())
         _sql(dotaz) 
 
         data_json = {}
-
 
 
         for element in data:
@@ -169,168 +181,77 @@ class module_edit(BaseHandler):
             """ %{'module':data_json['name'], 'image':data_json['image'], 'subtitle':data_json['longname_cs'], 'text':data_json['short_cs']})
         text_file.close()
 
-        #text_file = open('/home/roman/repos/Modules/'+self.get_argument('root')+'/README.cs.md', "w")
-        #text_file.write(pypandoc.convert_text(data_json['doc_cs'], 'markdown_github', format='html').encode('utf8'))
-        #text_file.close()
 
-        h = HTMLParser()
+        html_content = replace_entities(data_json['doc_cs']).encode('UTF-8')
+
         html =  """
-                <html>
-                <head>
-                <meta charset="UTF-8">
-                <style>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>%(module)s</title>
+    <meta name="generator" content="pandoc" />
+    <meta name="subtitle" content="%(subtitle)s"/>
+    <meta name="author" content="%(author)s"/>
+    <meta name="TopImage" content="/home/roman/repos/Modules/OpAmps/OZDUAL02B/DOC/SRC/img/OZDUAL02B_Top_Big.JPG"/>
+    <meta name="QR" content="/home/roman/repos/Modules/OpAmps/OZDUAL02B/DOC/SRC/img/OZDUAL02B_QRcode.png"/>
+    <meta name="abstract" content="%(abstract)s"/>
 
-                    html {
-                        max-width: 1000px;
-                    }
+<style>
+</style>
+<head>
+<body>
+    
+    %(doc)s
 
-                    h1, h2, h3, h4 {
-                        color: #f00;
-                        line-height: 1em;
-                        font-size: 150%%;
-                    }
+</body>
+</html>
 
-                    h1 {
-                        font-size: 200%%;
-                        
-                    }
+                """ %{'module':data_json['name'],'subtitle':data_json['longname_cs'], 'doc':html_content, 'author':"Autor 1, Autor 2", 'abstract':data_json['short_cs']}
+        #print html
 
-                    h1::before {
-                        counter-increment: count-h1;
-                        content: counter(count-h1) " ";
-                    }
-
-                    h2::before {
-                        counter-increment: count-h2;
-                        content: counter(count-h1) "." counter(count-h2) " ";
-                    }
-                    h3:before {
-                        counter-increment: count-h3;
-                        content: counter(count-h1) "." counter(count-h2) "." counter(count-h3) " ";
-                    }
-
-                    #header, p {
-                        font-size: 1.2em;
-                    }
-
-                    #footer table {
-                        width:100%%;
-                    }
-
-                    #footer td {
-                      width:50%%;
-                    }
-                    #footer .generated {
-                      text-align: right;
-                    }
-
-
-                    /*** Tables ***/
-                    table.gridtable , .gridtable td, .gridtable th{
-                      border: 1px solid #666;
-                      border-collapse: collapse;
-                      padding: 4px;
-                    }
-                    .gridtable th {
-                      background-color: #dedede;
-                    }
-                    table.infotable, .infotable td, .infotable th {
-                      border: 1px solid #666;
-                      border-collapse: collapse;
-                      padding: 2px 2px 0 2px;
-                      line-height: 1.2em;
-                      vertical-align: top;
-                      text-align: left;
-                    }
-                    table.infotable {
-                      width: 100%%;
-                    }
-                    .infotable th {
-                      background-color: #eee;
-                    }
-
-                    /*** HEADER ***/
-                    #header {
-                      border: 1px solid #000;
-                      border-collapse: collapse;
-                      margin-bottom: 2em;
-                      width:100%%;
-                      vertical-align: middle;
-                      line-height: 1em;
-                    }
-                    .attribute {
-                      font-weight: bold;
-                    }
-                    #header .logo, #header .logo img {
-                      width:100px;
-                    }
-                    #header table , #header td {
-                      border: 1px solid #000;
-                      padding: 0.3em;
-                      margin-bottom: 0;
-                    }
-
-
-                    @page {
-                        size: a4 portrait;
-                        margin: 1cm;
-                        margin-bottom: 2cm;
-                        @frame header_frame {           /* Static frame */
-                            -pdf-frame-content: header_content;
-                            left: 50pt; right: 50pt; top: 20pt;
-                        }
-                        @frame content_frame {             /* Content frame 1 */
-                            -pdf-frame-content: content_frame;
-                            left: 44pt; right: 44pt; top: 90pt; height: 632pt;
-                        }
-                        
-                        @frame footer_frame {           /* Static frame */
-                            -pdf-frame-content: footer;
-                            left: 2cm;
-                            right: 2cm;
-                            bottom: 0.5cm;
-                            height: 20pt;
-                        }
-                        @font-face {
-                          font-family: Example, "Example Font";
-                          src: url(example.ttf);
-                        }
-                    }
-
-                </style>
-                <head>
-                <body>
-
-                    <div id="header_content">
-                        <img src="http://195.88.142.202/static/logo.png" style="width: 150pt;"> </img>  
-                        <span style="width: 150pt;"> </span>  
-                        MLAB module SHT
-                    </div>
-                    
-                    <div id="content_frame">
-                    %s
-                    </div>
-
-                    <div id="footer">
-                        <hr>
-                        MLAB.cz - page <pdf:pagenumber> of <pdf:pagecount>
-                    </div>
-                </body>
-                </html>
-
-                """ %(h.unescape(data['doc_cs'][0].decode('utf-8')))
-        print html
-
-        text_file = open('/home/roman/repos/Modules/'+data['root'][0]+'/DOC/module.html', "w")
-        text_file.write(html.encode('utf-8'))
+        text_file = open('/home/roman/repos/Modules/'+data['root'][0]+'/DOC/SRC/module.cs.html', "w")
+        text_file.write(html)
         text_file.close()
 
-        resultFile = open('/home/roman/repos/Modules/'+data_json['root']+'/module.pdf', "w+b")
-        pisaStatus = pisa.CreatePDF(
-                html.encode('utf-8'),      # the HTML to convert
-                dest=resultFile,           # file handle to recieve result
-                encoding='utf-8')
-        resultFile.close()                 # close output file
+
+
+
+
+        html_content = replace_entities(data_json['doc_en']).encode('UTF-8')
+
+        html =  """
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>%(module)s</title>
+    <meta name="generator" content="pandoc" />
+    <meta name="subtitle" content="%(subtitle)s"/>
+    <meta name="author" content="%(author)s"/>
+    <meta name="TopImage" content="/home/roman/repos/Modules/OpAmps/OZDUAL02B/DOC/SRC/img/OZDUAL02B_Top_Big.JPG"/>
+    <meta name="QR" content="/home/roman/repos/Modules/OpAmps/OZDUAL02B/DOC/SRC/img/OZDUAL02B_QRcode.png"/>
+    <meta name="abstract" content="%(abstract)s"/>
+
+<style>
+</style>
+<head>
+<body>
+    
+    %(doc)s
+
+</body>
+</html>
+
+                """ %{'module':data_json['name'],'subtitle':data_json['longname_en'], 'doc':html_content, 'author':"Autor 1, Autor 2", 'abstract':data_json['short_en']}
+        #print html
+
+        text_file = open('/home/roman/repos/Modules/'+data['root'][0]+'/DOC/SRC/module.en.html', "w")
+        text_file.write(html)
+        text_file.close()
+
+
+        process = subprocess.Popen(["pandoc", "-s", '/home/roman/repos/Modules/'+data['root'][0]+'/DOC/SRC/module.cs.html', "-o", '/home/roman/repos/Modules/'+data['root'][0]+'/DOC/'+data_json['name']+'.cs.pdf', "--template=/home/roman/repos/test-mlab-ui/src/MLABweb/template/doc.en.latex"])
+        process = subprocess.Popen(["pandoc", "-s", '/home/roman/repos/Modules/'+data['root'][0]+'/DOC/SRC/module.en.html', "-o", '/home/roman/repos/Modules/'+data['root'][0]+'/DOC/'+data_json['name']+'.en.pdf', "--template=/home/roman/repos/test-mlab-ui/src/MLABweb/template/doc.en.latex"])
+        
 
         repo = Repo('/home/roman/repos/Modules')
 

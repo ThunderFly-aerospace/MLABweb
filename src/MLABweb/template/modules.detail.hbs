@@ -98,7 +98,9 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
         {% raw module_data['doc_en'] %}
         </div>
         <div class="tab-pane" id="download" role="tabpanel">
-          Empty
+            {% for documet in documents %}
+              <li><a href="https://github.com/MLAB-project/Modules/tree/master/{{documet[26:]}}">{{documet[26:]}}</a></li>
+            {% end %}
         </div>
       </div>
     </div>

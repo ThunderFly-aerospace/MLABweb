@@ -11,39 +11,31 @@
 
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
+\usepackage{longtable,booktabs}
+\usepackage{fixltx2e}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage[english]{babel}
-\usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
+\urlstyle{same}
  
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{MLAB}
+\lhead{\includegraphics[width=5cm]{/home/roman/logo.png}}
 \rhead{$title-meta$}
 \rfoot{Page \thepage}
+\lfoot{\date{\today}}
 
 
 
 \fi
-% use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
 \IfFileExists{microtype.sty}{%
 \usepackage{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\UseMicrotypeSet[protrusion]{basicmath}
 }{}
 
-\usepackage{hyperref}
 
 
-\urlstyle{same}  % don't use monospace font for urls
-
-
-\usepackage{longtable,booktabs}
 
 
 \title{$title$}
@@ -53,7 +45,7 @@ $if(subtitle)$
 \subtitle{$subtitle$}
 $endif$
 
-\author{$for(author)$$author$$sep$, $endfor$}
+\author{$for(author)$$author$$sep$ \and $endfor$}
 \date{$date$}
 
 
@@ -63,9 +55,7 @@ $endif$
 
 \begin{document}
 
-
-
-\thispagestyle{empty}
+%\thispagestyle{empty}
 \maketitle
 
 \begin{abstract}
@@ -75,19 +65,17 @@ $abstract$
 
 \begin{figure} [htbp]
 \begin{center}
-%\includegraphics [width=100mm] {$TopImage$} 
+%\includegraphics [width=100mm] {%(TopImage)s} 
 \end{center}
 \end{figure}
 
 \begin{figure} [b]
-%includegraphics [width=25mm] {$QR$} 
+%\includegraphics [width=25mm] {%(qr)s} 
 \end{figure}
 
 \newpage
 \tableofcontents
-$QR$
-
-\maketitle
+%$QR$
 
 
 $body$

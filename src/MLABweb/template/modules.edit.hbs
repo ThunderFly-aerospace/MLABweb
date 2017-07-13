@@ -39,6 +39,36 @@
   </script>
 
 
+  <script>
+  tinymce.init({
+    selector: '#doc_cs_new',
+    menubar: false,
+    toolbar_items_size: 'small',
+    plugins: "pagebreak table autoresize link image code fullscreen",
+    relative_urls: true,
+    autoresize_min_height: 350,
+    autoresize_max_height: 500,
+    toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pagebreak table image code | removeformat tools fullscreen",
+    pagebreak_separator: "<!-- break -->"
+  });
+  </script>
+
+
+  <script>
+  tinymce.init({
+    selector: '#doc_en_new',
+    menubar: false,
+    toolbar_items_size: 'small',
+    plugins: "pagebreak table autoresize link image code fullscreen",
+    relative_urls: true,
+    autoresize_min_height: 350,
+    autoresize_max_height: 500,
+    toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pagebreak table image code | removeformat tools fullscreen",
+    pagebreak_separator: "<!-- break -->"
+  });
+  </script>
+
+
 <script type="text/javascript">
 
     $(document).ready(function() {
@@ -172,6 +202,9 @@ $('.selectpicker').selectpicker({
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" role="tab" href="#en_US">en_US</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="modal" role="tab" href="#" onclick="openCompare()">Compare</a>
+          </li>
         </ul>
         
         <br>
@@ -188,7 +221,9 @@ $('.selectpicker').selectpicker({
                 </div>
                 <div class="form-group">
                   <label name="post-title" for="post-title">Detailní popis</label><br>
-                  <textarea id="doc_cs" class="form-control">{% if module_data%} {{module_data['doc_cs']}} {%end %}</textarea>
+                	<div id="placer_cs">
+                  	<textarea id="doc_cs" class="form-control">{% if module_data%} {{module_data['doc_cs']}} {%end %}</textarea>
+                  	</div>
                 </div>
             </div>
             <div class="tab-pane" id="en_US" role="tabpanel">
@@ -203,7 +238,9 @@ $('.selectpicker').selectpicker({
                 </div>
                 <div class="form-group">
                   <label name="post-title" for="post-title">Detailní popis</label><br>
-                  <textarea id="doc_en" class="form-control">{% if module_data%} {{module_data['doc_en']}} {%end %}</textarea>
+                	<div id="placer_en">
+                  	<textarea id="doc_en" class="form-control">{% if module_data%} {{module_data['doc_en']}} {%end %}</textarea>
+                  	</div>
                 </div>
             </div>
         </div>
@@ -221,22 +258,63 @@ $('.selectpicker').selectpicker({
 </div>
 
 
+
 <!-- Modal -->
-<div class="modal fade" id="waitmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div class="modal bd-example-modal-lg" id="CompareModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Čekejte na dokončení</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Compare</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseCompare()">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        ...
+	      <div class="row">
+	      	<div class="col">
+	      		<div id="new_placer_cs">
+	          		<textarea id="doc_cs_new" class="form-control">{% if module_data%} {{module_data['doc_en']}} {%end %}</textarea>
+	      		</div>
+	      	</div>
+	      	<div class="col">
+	      		<div id="new_placer_en">
+	          		<textarea id="doc_en_new" class="form-control">{% if module_data%} {{module_data['doc_en']}} {%end %}</textarea>
+	      		</div>
+	      	</div>
+	      </div>
       </div>
-
     </div>
   </div>
 </div>
+
+
+
+<script type="text/javascript">
+	function openCompare() {
+		var text_cs;
+		var text_en;
+		text_cs = window.parent.tinymce.get('doc_cs').getContent();
+		text_en = window.parent.tinymce.get('doc_en').getContent();
+		$('#CompareModal').modal('toggle');
+		window.parent.tinymce.get('doc_cs_new').setContent(text_cs);
+		window.parent.tinymce.get('doc_en_new').setContent(text_en);
+		
+	}
+	function CloseCompare() {
+		var text_cs;
+		var text_en;
+		text_cs = window.parent.tinymce.get('doc_cs_new').getContent();
+		text_en = window.parent.tinymce.get('doc_en_new').getContent();
+		$('#CompareModal').modal('toggle');
+		window.parent.tinymce.get('doc_cs').setContent(text_cs);
+		window.parent.tinymce.get('doc_en').setContent(text_en);
+		
+	}
+
+
+
+
+</script>
 
 
 

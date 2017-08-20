@@ -143,6 +143,13 @@ connection.close()
 
 
 for top, dirs, files in os.walk('/home/roman/repos/Modules'):
-    if 'jpg' in files.lower() or 'png' in files.lower():
-        if files != files.lower():
-            print files
+    #if 'jpg' in files.lower() or 'png' in files.lower():
+    #    if files != files.lower():
+    #        print files
+    #print top
+    for file in files:
+        #print ">>", file
+        if 'module.json' in file:
+            print os.path.join(top,file), ">>",
+            print os.path.join(top, os.path.basename(top)+'.json')
+            os.rename(os.path.join(top,file), os.path.join(top, os.path.basename(top)+'.json') )

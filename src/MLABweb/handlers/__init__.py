@@ -21,12 +21,12 @@ import os
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         #print help(tornado.locale.get())
-        print tornado.locale.get("es_LA")
+        #print tornado.locale.get("es_LA")
         #print help(tornado.locale.get().get_closest(['cs','en']))
-        print tornado.locale.get('cs_CZ', 'cs_CZ')
-        for x in tornado.locale.get_supported_locales():
-            print x
+        #print tornado.locale.get('cs_CZ')
         print tornado.locale.get_supported_locales()
+        print "language:"
+        print self.get_user_locale()
         login = self.get_secure_cookie("login")
         token = self.get_secure_cookie("token")
         if not login:
@@ -34,14 +34,18 @@ class BaseHandler(tornado.web.RequestHandler):
         else:
             return _sql("SELECT * from Users WHERE login = '%s'" %(login))[0]
 
-    '''
+    
     def get_user_locale(self):
         if not self.get_cookie("locale"):
-            self.set_cookie("locale","en_US")
-            return "en_US"
+            print "Locale neni nastaveno - nastavuji en_UK"
+            tornado.locale.set_default_locale("en_UK")
+            return self.get_browser_locale()
 
-        return self.get_cookie("locale")
-    '''
+        locale =  self.get_cookie("locale")
+        print "locale:", locale
+        tornado.locale.set_default_locale(locale)
+        return self.get_browser_locale()
+    
 
 
 def sendMail(to, subject = "MLAB", text = "No content"):

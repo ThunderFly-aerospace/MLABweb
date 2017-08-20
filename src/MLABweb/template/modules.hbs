@@ -44,7 +44,7 @@ a.selected{
 
 <div class="card" style="margin-left: -15px; margin-right: -15px;">
   <div class="card-block">
-	<ul class="columns">
+	<ul class="columns" style="padding: 15pt;">
 	{% for cat in _sql("SELECT* FROM Categories ORDER by name;")%}
 		<li> <a href="/modules/{{cat['name']}}/" class="{%if category == cat['name']%}selected{%end%}">{{cat['name_cs']}}</a></li>
 
@@ -90,7 +90,7 @@ a.selected{
 <div class="card-deck">
   
 {% for module in modules %}
-<div class="col-sm-4">
+<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
     <div class="card">
     	<a href="/module/{{module['name']}}/">
     	{% if not module['image']%}
@@ -100,11 +100,11 @@ a.selected{
     	{% end %}
     	</a>
 		<div class="status status-{{module['status']}}"></div>
-    	<div class="card-block">
+    	<div class="card-block" style="padding: 10pt;">
     		
       	<h4 class="card-title"><a href="/module/{{module['name']}}/">{{module['name']}}</a></h4>
       	<p class="card-text">
-			{{module['short_cs']}}
+			{{module[_('short_cs')]}}
 		</p>
 		</div>
 		{%if current_user and current_user['is_staff'] %}

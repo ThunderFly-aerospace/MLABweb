@@ -2,21 +2,19 @@
 <html lang="en">
 {% set navItems = ['oo', 'oo']%}
   <head>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=PT+Sans+Narrow" />
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/static/WOW/css/libs/animate.css">
+    
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ escape(handler.settings["name"]) }}</title>
 
-
-
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
 
-    <!-- <script src="/static/tether/dist/js/tether.min.js"></script>
-    <link rel="stylesheet" href="/static/tether/dist/css/tether.min.css"> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.9.9/popper.min.js"></script> -->
-    <!-- <script src="/static/bootstrap/dist/js/bootstrap.min.js"></script> -->
     <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
 
 
@@ -36,6 +34,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
 
 
+    <link rel="stylesheet" type="text/css" href="/static/mlab_style.css">
+    
     <script type="text/javascript">
       $(document).ready(function() {
         $("img").unveil(2000);
@@ -44,15 +44,7 @@
       $("<img/>")
           .on('load', function() { console.log("image loaded correctly"); })
           .on('error', function() { console.log("error loading image"); })
-          .attr("src", $("originalImage").attr("src"))
-      ;
-    </script>
-
-<link rel="stylesheet" type="text/css" href="/static/mlab_style.css">
-
-
-  <script type="text/javascript">
-    
+          .attr("src", $("originalImage").attr("src"));
 
       $("img").unveil(200, function() {
         $(this).load(function() {
@@ -61,43 +53,59 @@
       });
 
 
+      function setLang(lang){
+        console.log("set lang", lang);
+        document.cookie = "locale="+lang;
+        alert(lang);
+        location.reload();
+      }
+
+
   </script>
 
     
   {% block head %}{% end %}
 </head>
-<body ><div id="wrapper">
+<body >
   <!--{% include 'nav.hbs' %}-->
 
-        <div class="header">
 
+  <div class="header" style="position: fixed;">
   <div class="container">
-        <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="/">{{ _("Home")}}</a></li>
-          <li><a href="/modules/">{{ _("Modules")}}</a>
-          <li><a href="#">{{ _("About")}}</a></li>
-          <li><a href="#">{{ _("Contact")}}</a></li>
-          <li>{%if current_user %} <a href="/logout/">{{ _("Log out")}} {{current_user['name']}} {%else%} <a href="/login/"> {{ _("Log in") }} {%end%}</a></li>
-        </ul>
-        <h3 class="muted"><a href="/"><img src="/static/logo.png" height="35pt" alt="MLAB"></img></a></h3>
-        </div>
-      </div>
+    <ul class="nav nav-pills pull-right">
+      <li class="active"><a href="/">{{ _("Home")}}</a></li>
+
+      <li class=""><a href="/#onas">{{ _("About")}}</a></li>
+      <li class=""><a href="/modules?status=2">{{ _("Modules")}}</a>
+      <li class=""><a href="/#home_contact">{{ _("Contact")}}</a></li>
+      <li class=""><a hcef="https://github.com/MLAB-project">GitHub</a></li>
+      <li class=""><a hcef="http://wiki.mlab.cz/">Wiki</a></li>
+      <li class="submenu"> <a>Lang</a><div class="submenu_show"><ul>
+        <li> <a onclick="setLang('cs_CZ')"><img src="/static/media/flags/CZ.png"> Cs </a></li>
+        <li> <a onclick="setLang('en_UK')"><img src="/static/media/flags/GB.png"> En </a></li>
+      </ul></div></li>
+      <li>{%if current_user %} <a href="/logout/">{{ _("Log out")}} <small> {{current_user['name']}}</small> {%else%} <a href="/login/"> {{ _("Log in") }} {%end%}</a></li>
+    </ul>
+    <h3 class="muted"><a href="/"><img src="/static/logo.png" height="35pt" alt="MLAB"></img></a></h3>
+  </div><hr style="margin: 0px">
+  </div>
+<div id="wrapper">
+
 
       <hr>
       {{_("Lang")}}
       {{locale.name}}
 
 
+  
+  {% block container %}{% end %}
 
-  <div class="container">
+  <div class="container" style="min-width: 90%; max-width: 100%;">
   <br>
       <div class="container-fluid">
-
-
           <div class="row">
-
               <div class="col-lg-12">
-                <div class="container">
+                <div class="container" style="min-width: 90%; max-width: 100%;">
                     {% block content %}{% end %}
                 </div>
               </div>

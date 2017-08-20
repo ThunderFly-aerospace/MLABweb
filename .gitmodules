@@ -17,3 +17,9 @@
 [submodule "src/MLABweb/static/WOW"]
 	path = src/MLABweb/static/WOW
 	url = git@github.com:matthieua/WOW.git
+[submodule "src/MLABweb/static/popper.js"]
+	path = src/MLABweb/static/popper.js
+	url = git@github.com:FezVrasta/popper.js.git
+[submodule "src/MLABweb/static/lightbox"]
+	path = src/MLABweb/static/lightbox
+	url = git@github.com:ashleydw/lightbox.git

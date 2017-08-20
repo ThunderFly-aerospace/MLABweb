@@ -139,13 +139,14 @@ $('.selectpicker').selectpicker({
                 <!-- <input type="text" class="form-control" id="image" {% if module_data%} value = "{{module_data['image']}}" {%end %}></input> -->
    
                 <select class="form-control custom-select" id="image">
-                  <option value=""> -- Vyberte obrázek --</option>
+                  <option value=""> -- Vyberte obrázek -- </option>
                         {% for image in images %}
                     
-                        <option value='{{"/".join(image.split("/")[7:])}}' {% if module_data['image'] == "/".join(image.split("/")[7:]) %} selected {%end%}>{{"/".join(image.split("/")[7:])}}</option>
+                        <option value='{{image[image.find("/DOC")+1:]}}' {% if module_data['image'] == image[image.find("/DOC")+1:] %} selected {%end%}>{{image[image.find("/DOC")+1:]}}</option>
                     
                         {%end%}
                 </select>
+
           </div>
         </div>
 

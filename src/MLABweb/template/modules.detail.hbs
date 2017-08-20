@@ -41,18 +41,18 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
     <div class="card">
 
       {% if not module_data['image']%}
-      <img class="card-img-top" src="/src/static/noimage.png" data-src="/repos/{{module_data['root']}}/DOC/SRC/img/{{module_data['name']}}_Top_Big.jpg" alt="madule">
+      <img class="card-img-top" src="/static/noimage.png" data-src="/repos/{{module_data['root']}}/DOC/SRC/img/{{module_data['name']}}_Top_Big.jpg" alt="madule">
       {% else %}
-      <img class="card-img-top" src="/src/static/noimage.png" data-src="/repos/{{module_data['root']}}/{{module_data['image']}}" alt="Module">
+      <img class="card-img-top" src="/static/noimage.png" data-src="/repos/{{module_data['root']}}/{{module_data['image']}}" alt="Module">
       {% end %}
 
       <div class="status status-{{module_data['status']}}"></div>
 
-      <div class="card-block">
+      <div class="card-block" style="padding: 10pt;">
         <h2 class="card-title">{{module_data['name']}}</h2>
-        <h4 class="card-subtitle mb-2 text-muted">{{module_data['longname_cs']}}</h4>
+        <h4 class="card-subtitle mb-2 text-muted">{{module_data[_('longname_cs')]}}</h4>
         <!-- <h4 class="card-subtitle mb-2 text-muted">{{module_data['longname_en']}}</h4> -->
-        <p class="card-text">{{module_data['short_cs']}}</p>
+        <p class="card-text">{{module_data[_('short_cs')]}}</p>
         <a href="https://github.com/MLAB-project/Modules/tree/master/{{module_data['root']}}"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>
         <a href="https://github.com/roman-dvorak/Modules/tree/master/{{module_data['root']}}"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>
         {% if module_data['wiki'] != None %} <a href="{{module_data['wiki']}}"><i class="fa fa-book fa-2x" aria-hidden="true"></i></a> {% else %} <a href="http://wiki.mlab.cz/doku.php?id=cs:{{module_data['name'][:3]}}"><i class="fa fa-book fa-2x" aria-hidden="true"></i></a> {% end %}
@@ -68,8 +68,8 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
       <div class="card-block card-gallery">
         {# {{images}} #}
         {% for image in images %}
-            <a href="/repos/{{image[26:]}}" data-toggle="lightbox" data-gallery="example-gallery">
-                <img src="/repos/{{image[26:]}}" class="img-thumbnail rounded" width="30%">
+            <a href="/repos/{{image[26:]}}" data-toggle="lightbox" data-gallery="example-gallery" style="padding-right: 5pt; margin-top: 10pt">
+                <img src="/repos/{{image[26:]}}" class="img-thumbnail rounded" width="30%" style="padding: 0pt;">
             </a>
         {% end %}
       </div>
@@ -91,13 +91,13 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
       </ul>
     </div>
       <div class="card-block tab-content">
-        <div class="tab-pane" id="cs" role="tabpanel">
+        <div class="tab-pane" id="cs" role="tabpanel" style="padding: 10pt;">
         {% raw module_data['doc_cs'] %}
         </div>
-        <div class="tab-pane active" id="en" role="tabpanel">
+        <div class="tab-pane active" id="en" role="tabpanel" style="padding: 10pt;">
         {% raw module_data['doc_en'] %}
         </div>
-        <div class="tab-pane" id="download" role="tabpanel">
+        <div class="tab-pane" id="download" role="tabpanel" style="padding: 10pt;">
             {% for documet in documents %}
               <li><a href="https://github.com/MLAB-project/Modules/tree/master/{{documet[26:]}}">{{documet[26:]}}</a></li>
             {% end %}

@@ -1,12 +1,20 @@
 body {
-padding-top: 20px;
-padding-bottom: 40px;
+padding-top: 20pt;
+padding-bottom: 40pt;
 background-color: #FFF;
 
 font-family: roboto, arial, sans-serif;
 font-style: normal;
 font-weight: 200;
 text-decoration: none;
+}
+
+.header{
+	z-index: 10;
+	padding-top: 10pt;
+	background: white;
+	width: 100%;
+	top: 0pt;
 }
 
 .header li a{
@@ -26,6 +34,21 @@ color: #000;
 border-bottom: 3px solid #000;
 font-weight: bold;
 color: #000;
+}
+
+.submenu:hover .submenu_show{
+	display: block;
+}
+
+.submenu_show{
+	display: none;
+}
+
+.submenu ul{
+	position: absolute;
+	background: white;
+	list-style: none;
+	padding: 10pt;
 }
 
 .card-deck .card{
@@ -102,13 +125,23 @@ width:100%;
 background-repeat: no-repeat;
 background-attachment: fixed;
 background-position: center center;
+
+background-size: center 100%; 
+
 -webkit-background-size: cover;
 -moz-background-size: cover;
 -o-background-size: cover;
 background-size: cover !important;
 
 }
+.module-card:hover{
+	background-color: white;
+}
 
+.module-card:hover{
+	background-color: #8bc34a;
+	transition: 500ms;
+}
 
 .text-center{
     text-align: center;
@@ -126,7 +159,13 @@ h3.feature-describe{
 	padding-bottom: 0pt;
 }
 
+img.feature-describe{
+	opacity: 0.6;
+}
+
+
 .feature-describe:hover {
+	opacity: 1;
 	color: black;
 	transition: 500ms;
 }

@@ -39,7 +39,8 @@ class permalink(BaseHandler):
 class home(BaseHandler):
     @asynchronous
     def get(self):
-        module_data = _sql("SELECT * FROM MLAB.Modules WHERE status='2' ORDER by name")
+        #module_data = _sql("SELECT * FROM MLAB.Modules WHERE status='2' ORDER by modif DESC")
+        module_data = _sql("SELECT * FROM `MLAB`.`Modules` WHERE status='2' AND `image` NOT LIKE '%QRcode%' AND CHARACTER_LENGTH(`longname_cs`) > 20 ORDER BY 'modif' DESC;")
         self.render("index.hbs",  _sql=_sql, parent=self, modules = module_data)
 
 class module_detail(BaseHandler):

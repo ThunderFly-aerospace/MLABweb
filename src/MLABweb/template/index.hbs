@@ -5,28 +5,19 @@
     <link rel="stylesheet" href="/static/WOW/css/libs/animate.css">
 
 
-
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.1/popper.js"></script>
+    <script src="static/bootstrap/dist/js/bootstrap.min.js"></script>
 
-    <!-- <script src="/static/tether/dist/js/tether.min.js"></script>
-    <link rel="stylesheet" href="/static/tether/dist/css/tether.min.css"> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.9.9/popper.min.js"></script> -->
-    <!-- <script src="/static/bootstrap/dist/js/bootstrap.min.js"></script> -->
     <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
-
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.css" />
-
     <link rel="stylesheet" href="/static/font-awesome-4.7.0/css/font-awesome.min.css">
 
     <script src='/static/tinymce-dist/tinymce.min.js'></script>
     <script src="/static/unveil/jquery.unveil.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.css" />
+    <script src="/static/lightbox/dist/ekko-lightbox.js"></script>
+    <link rel="stylesheet" href="/static/lightbox/dist/ekko-lightbox.css" />
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
@@ -41,31 +32,54 @@
       $("<img/>")
           .on('load', function() { console.log("image loaded correctly"); })
           .on('error', function() { console.log("error loading image"); })
-          .attr("src", $("originalImage").attr("src"))
-      ;
+          .attr("src", $("originalImage").attr("src"));
+
+      function setLang(lang){
+        console.log("set lang", lang);
+        document.cookie = "locale="+lang;
+        location.reload();
+      }
     </script>
 
   <link rel="stylesheet" type="text/css" href="/static/mlab_style.css">
+  <style type="text/css">
+    .carousel-indicators li.dark{
+      background-color: lightgray;
+    }
+    .carousel-indicators li.dark.active{
+      background-color: black;
+    }
+
+  </style>
 
 </head>
-<body style="padding-top: 0px; background: #e0e0e0;"><div id="wrapper">
+<body style="padding-bottom: 0pt;">
   <!--{% include 'nav.hbs' %}-->
 
-  <div class="header-home">
-        <h3 class="muted"><a href="/"><img src="/static/logo.png" height="35pt" alt="MLAB" style="position:absolute; top:0;bottom:0; margin:auto;"></img></a></h3>
-        <div style="float: right;">
-          <ul>
-            <li style="display: inline; text-decoration: underline;">Home</li>
-            <li style="display: inline;"><a href="/modules">Modules</a></li>
-            <li style="display: inline;">GitHub</li>
-            <li style="display: inline;">Wiki</li>
-            <li style="display: inline;"><a href="#onas">About</a></li>
+<!-- 
+  <div style=" position: fixed; z-index: 10; padding-top: 15pt; background: white; width: 100%; top: 0pt;" > -->
 
-          </ul>
+  <div class="header" style="position: fixed;">
+  <div class="container">
+    <ul class="nav nav-pills pull-right">
+      <li class="active"><a href="/">{{ _("Home")}}</a></li>
 
-        </div>
-
+      <li class=""><a href="#onas">{{ _("About")}}</a></li>
+      <li class=""><a href="/modules?status=2">{{ _("Modules")}}</a>
+      <li class=""><a href="#home_contact">{{ _("Contact")}}</a></li>
+      <li class=""><a hcef="https://github.com/MLAB-project">GitHub</a></li>
+      <li class=""><a hcef="http://wiki.mlab.cz/">Wiki</a></li>
+      {#<li>{%if current_user %} <a href="/logout/">{{ _("Log out")}} {{current_user['name']}} {%else%} <a href="/login/"> {{ _("Log in") }} {%end%}</a></li>#}
+        
+      <li class="submenu"> <a>Lang</a><div class="submenu_show"><ul>
+        <li> <a onclick="setLang('cs_CZ')"><img src="/static/media/flags/CZ.png"> Cs </a></li>
+        <li> <a onclick="setLang('en_UK')"><img src="/static/media/flags/GB.png"> En </a></li>
+      </div></ul></li>
+    </ul>
+    <h3 class="muted"><a href="/"><img src="/static/logo.png" height="35pt" alt="MLAB"></img></a></h3>
+  </div><hr style="margin: 0px">
   </div>
+
 
     
 <div id="image_list" class="carousel slide" data-ride="carousel" style="max-height: 105%;">    <!-- Zacatek Karuselu -->
@@ -107,11 +121,11 @@
   <!-- Ovladaci prvky Karuselu -->
   <a class="carousel-control-prev" href="#image_list" role="button" data-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
+    <span class="sr-only">{{_('Previous')}}</span>
   </a>
   <a class="carousel-control-next" href="#image_list" role="button" data-slide="next">
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
+    <span class="sr-only">{{_('Next')}}</span>
   </a>
 </div>   <!-- Konec Karuselu -->
 
@@ -127,7 +141,7 @@
 
       <div style="padding: 15pt;" class="text-center"> 
       <div class="text-center" style="padding: 15pt; padding-bottom: 20pt;">
-        <h1 name="onas" > WHAT IS THE <b>MLAB</b>?</h1> <p>MLAB is open-source eletronic building kit for scientists and amatuers.</p>
+        <h1 id="onas" > WHAT IS THE <b>MLAB</b>?</h1> <p>MLAB is open-source eletronic building kit for scientists and amatuers.</p>
       </div>
       <div class="row">
 
@@ -138,9 +152,7 @@
           <p class="text-center feature-describe wow fadeInDown">MLAB contains various modules of many sensors, microcontrollers, translators or motor drivers.</p>
         </div>
         <div class="col-sm-12 col-md-4 col-md-push-4 text-center wow fadeIn">
-          <h1> VELKÝ </h1>
-          <h1> OBRÁZEK </h1>
-          <p>asi něčeho, kde je pár modulů na malé ALBASE - pozadí průhledné</p>
+          <img src="/static/media/sdr_widget_small.png" style="width: 100%" class="feature-describe">
         </div>
         <div class="col-sm-12 col-md-4 col-md-push-4 text-center wow fadeIn">
           <h3 class="text-center feature-describe">Open-Source</h3>
@@ -152,73 +164,155 @@
       </div>
 
 
+</div></div>
+      <div style="height: 75pt; background-image: url('/static/media/rmds.jpg');" class="home_static_background"></div>
+<div id="wrapper" style=" width: 100%; max-width: 1500pt; margin-left: auto; margin-right: auto;"><div style="margin-left: 30pt; margin-right: 30pt; background: white; padding: 0pt; border-radius: 10px 10px 0px 0px; min-height: 100px">
 
+<!-- Zacatek partneri -->
+      <div style="padding: 15pt;"> <h2>{{_('Partners')}}</h2><br> </div>
 
+  <div id="partners_list" class="carousel slide" data-ride="carousel" style="max-height: initial;">    <!-- Zacatek Karuselu -->
 
+    <div class="carousel-inner" role="listbox" style="min-height: 50pt;">
+      <div class="carousel-item active" style="min-height: 150pt;">
 
+        <div class="row">
+          <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
+            <a href="http://www.ust.cz"><img src="/static/media/ust_logo.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
+          </div>
+          <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
+            <a href="http://wiki.bolidozor.cz"><img src="/static/media/Bolidozor_logo.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
+          </div>
+          <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
+            <a href="http://asu.cas.cz"><img src="/static/media/asu_logo.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
+          </div>
+          <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
+            <a href="http://wiki.ionozor.cz"><img src="/static/media/ionozor_logo.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
+          </div>
+        </div>
 
-
-
-      <div style="height: 50pt; background-image: url('/static/media/rmds.jpg');" class="home_static_background">
       </div>
 
-      <div style="margin: 0pt; background-image: url('/static/media/rmds.jpg'); max-height: initial;" class="home_static_background">
-        
-      <div class="row" style="margin: 0; ">
-        {%for module in modules%} 
-          <div style="padding: 10pt;" class="col-sm-6 col-md-4 col-lg-4 col-xl-3 col-12"><div style="background-color: white;" class="card"><a href="/module/{{module['name']}}/">
 
-            <img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['name']}}_Top_Big.jpg" alt="{{module['name']}}">
-            <div class="home-card-text">
-            <h3>{{module['name']}}</h3>
-            <small>{{module['short_cs']}}</small>
-            </div>
-          </a></div></div>
-        {%end%}
-      </div>
+      <div class="carousel-item" style="min-height: 150pt;">
 
-      </div>
-      <div style="height: 50pt; background-image: url('/static/media/rmds.jpg');" class="home_static_background">
-      </div>
-
-      <div style="padding: 15pt;"> <h2> Partneři</h2> <p>Spotřeby tříkilometrové sklo plné, obyčejné sedm si procent mi let ulice vzáleném. Nature ovcí dolní ní násilnému lovecké sestavení 80 ℃ nočních čemž ubývání. Tóny ostrovní 750 v plíseň obchodu ně teploty k nimi indy. By indický svých liší či přicházejí narozen – obraně, zápory pročítat s označení. Všechna stoupajících i užitečných pracuje </p></div>
-<!-- 
-      <div style="height: 75pt; width: 100%; background-image: url('/static/media/rmds.jpg');background-attachment: fixed; background-position: center top; background-size: auto auto;" class="home_static_background">
-      </div> -->
-      <div style="height: 75pt; background-image: url('/static/media/rmds.jpg');" class="home_static_background">
-      </div>
-
-      <div style="padding: 15pt;"> <h2> Spolupráce</h2> <p>Spotřeby tříkilometrové sklo plné, obyčejné sedm si procent mi let ulice vzáleném. Nature ovcí dolní ní násilnému lovecké sestavení 80 ℃ nočních čemž ubývání. Tóny ostrovní 750 v plíseň obchodu ně teploty k nimi indy. By indický svých liší či přicházejí narozen – obraně, zápory pročítat s označení. Všechna stoupajících i užitečných pracuje </p></div>
-      <div>dlouhy text</div><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br>
-      <div>dlouhy text</div><br><br><br>
-      <div>dlouhy text</div><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br>
-
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br><br>
-      <div>dlouhy text</div><br>
-      <div id="home_contact" style="height: 25em; background-color: #37474f; color: #cfd8dc; padding: 15pt;">
-        <h1>Contacts</h1>
-        
+        <div class="row">
+          <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
+            <a href="http://www.ust.cz"><img src="/static/media/ust_logo.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
+          </div>
+          <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
+            <a href="http://wiki.bolidozor.cz"><img src="/static/media/Bolidozor_logo.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
+          </div>
+          <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
+            <a href="http://asu.cas.cz"><img src="/static/media/asu_logo.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
+          </div>
+          <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
+            <a href="http://wiki.ionozor.cz"><img src="/static/media/ionozor_logo.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
+          </div>
+        </div>
 
       </div>
 
     </div>
-</div>
+    
+    <ol class="carousel-indicators" style="bottom: -5pt">
+      <li data-target="#partners_list" data-slide-to="0" class="dark active"></li>
+      <li data-target="#partners_list" data-slide-to="1" class="dark "></li>
+    </ol>
+  </div>
+  <div style="height: 30pt;"></div>
 
-</div>
+  <!-- Konec partneri -->
+
+
+
+</div></div>
+      <div style="height: 75pt; background-image: url('/static/media/rmds.jpg');" class="home_static_background"></div>
+<div id="wrapper" style=" width: 100%; max-width: 1500pt; margin-left: auto; margin-right: auto;"><div style="margin-left: 30pt; margin-right: 30pt; background: white; padding: 0pt; border-radius: 10px 10px 0px 0px; min-height: 100px">
+      <!-- 
+      <div style="margin: 0pt; background-image: url('/static/media/rmds.jpg'); max-height: initial;" class="home_static_background"> -->
+      <div style="margin: 0pt; max-height: initial; background-color: white;" class="home_static_background">
+  
+  <!-- Zacatek seznam modulu -->  
+      <div id="modules" class="row" style="margin: 0; ">
+        {%for module in modules%}
+          <div style="padding: 10pt;" class="col-sm-6 col-md-4 col-lg-4 col-xl-3 col-12"><div class="card module-card"><a href="/module/{{module['name']}}/">
+
+            {% if not module['image']%}
+            <img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['name']}}_Top_Big.jpg" alt="{{module['name']}}">
+            {% else %}
+            <img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/{{module['image']}}" alt="{{module['name']}}">
+            {% end %}
+
+            <div class="home-card-text">
+            <h3>{{module['name']}} {%if current_user and current_user['is_staff'] %}<small class="text-muted"> - <a href="/module/{{module['name']}}/edit">ed</a></small>{%end%}</h3>
+            <small>{{module[_("short_en")]}}</small>
+            </div>
+          </a></div></div>
+        {%end%}
+      </div>
+  <!-- Konec seznam modulu -->  
+      <br>
+
+      </div>
+<!-- 
+      <div style="height: 75pt; width: 100%; background-image: url('/static/media/rmds.jpg');background-attachment: fixed; background-position: center top; background-size: auto auto;" class="home_static_background">
+      </div> -->
+
+    </div>
+  </div>
+
+
+      <div style="height: 100pt; background-image: url('/static/media/rmds.jpg');" class="home_static_background">
+      </div>
+
+      <div style="min-height: 50%; background-color: #263238; color: #CFD8DC; padding: 15pt; padding-top: 40pt;" >
+        <h2>{{_('Cooperation')}}</h2>
+        
+      </div>
+      <div style="min-height: 50%; background-color: #E0E0E0; color: #546E7A; padding: 15pt; padding-top: 40pt;" >
+        <h2>{{_('Members')}}</h2>
+        
+      </div>
+
+      </div>
+      <div id="home_contact" style="min-height: 50%; background-color: #37474f; color: #cfd8dc; padding: 15pt; padding-top: 40pt;" >
+        <div style="width: 75%; margin: auto;">
+        <!-- <h1 name="contact">Contacts</h1> -->
+        <div class="row">
+          
+
+          <div class="col-md-2">
+            <h3>{{_('Links')}}</h3>
+            <a href="https://github.com/MLAB-project">GitHub</a><br>
+            <a href="https://gitter.im/MLAB-project">Gitter</a><br>
+            <a href="https://www.facebook.com/MLAB-203283666377414">Facebook</a><br>
+            <a href="https://plus.google.com/110124234725033215669">Google +</a><br>
+            <a href="https://www.youtube.com/channel/UCCt-R6wkMmc3Aoi0c3IqpjA">YouTube</a><br>
+            <br>
+
+            <h3>{{_('MLAB mailing list')}}</h3>
+            <a href="mailto:mlab-users@googlegroups.com">mlab-users@googlegroups.com</a>
+            <h3>{{_('E-mail contact')}}</h3>
+            <a href="mailto:info@mlab.cz">info@mlab.cz</a>
+          </div>
+          <div class="col-md-2">
+            <h3>{{_('Contact address')}}</h3>
+            <p>
+              U Jatek 19<br>
+              392 01 Soběslav<br>
+              {{_('Czech republic')}}<br>
+            </p>
+
+          </div>
+          <div class="col-md-8">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2603.7520981987973!2d14.702917052025029!3d49.26214447922757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb5ff7c170895868f!2sUniversal+Scientific+Technologies+s.r.o.!5e0!3m2!1scs!2scz!4v1503153151984" width="800" height="600" frameborder="0" style="border:0; height: 75%; width: 100%;" allowfullscreen></iframe>
+          </div>
+      </div>
+    </div>
+
+  </div>
+
 </body>
 
 <script src="/static/WOW/dist/wow.js"></script>

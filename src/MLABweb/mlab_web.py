@@ -22,7 +22,7 @@ from handlers import _sql, BaseHandler, basic
 
 
 tornado.options.define("port", default=10010, help="port", type=int)
-tornado.options.define("debug", default=True, help="debug mode")
+tornado.options.define("debug", default=False, help="debug mode")
 
 
 class all(BaseHandler):

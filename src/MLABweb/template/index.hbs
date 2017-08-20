@@ -71,7 +71,7 @@
       <li class=""><a hcef="http://wiki.mlab.cz/">Wiki</a></li>
       {#<li>{%if current_user %} <a href="/logout/">{{ _("Log out")}} {{current_user['name']}} {%else%} <a href="/login/"> {{ _("Log in") }} {%end%}</a></li>#}
         
-      <li class="submenu"> <a>Lang</a><div class="submenu_show"><ul>
+      <li class="submenu"> <a>{{_("Language")}}</a><div class="submenu_show"><ul>
         <li> <a onclick="setLang('cs_CZ')"><img src="/static/media/flags/CZ.png"> Cs </a></li>
         <li> <a onclick="setLang('en_UK')"><img src="/static/media/flags/GB.png"> En </a></li>
       </div></ul></li>
@@ -141,24 +141,24 @@
 
       <div style="padding: 15pt;" class="text-center"> 
       <div class="text-center" style="padding: 15pt; padding-bottom: 20pt;">
-        <h1 id="onas" > WHAT IS THE <b>MLAB</b>?</h1> <p>MLAB is open-source eletronic building kit for scientists and amatuers.</p>
+        <h1 id="onas" > {{_("what_is")}} <b>MLAB</b>?</h1> <p>{{_("mlab_what_is_text")}}</p>
       </div>
       <div class="row">
 
         <div class="col-sm-12 col-md-4 col-md-push-4 wow fadeIn">
-          <h3 class="text-center feature-describe">Modular</h3>
-          <p class="text-center feature-describe wow fadeInDown">All eletronical components separed on own module with necessary components. It allows you to develop your devices quickly and cheaply or simpyl expand with new components. Modules are stacked on aluminium base board which makes assemblies compact and robust.</p>
-          <h3 class="text-center feature-describe">Diversity</h3>
-          <p class="text-center feature-describe wow fadeInDown">MLAB contains various modules of many sensors, microcontrollers, translators or motor drivers.</p>
+          <h3 class="text-center feature-describe">{{_("Modular")}}</h3>
+          <p class="text-center feature-describe wow fadeInDown">{{_("Modular_text")}}</p>
+          <h3 class="text-center feature-describe">{{_("Diversity")}}</h3>
+          <p class="text-center feature-describe wow fadeInDown">{{_("Diversity_text")}}</p>
         </div>
         <div class="col-sm-12 col-md-4 col-md-push-4 text-center wow fadeIn">
           <img src="/static/media/sdr_widget_small.png" style="width: 100%" class="feature-describe">
         </div>
         <div class="col-sm-12 col-md-4 col-md-push-4 text-center wow fadeIn">
-          <h3 class="text-center feature-describe">Open-Source</h3>
-          <p class="text-center feature-describe wow fadeInDown">All documentation for use and manufacturing are publicly available.</p>
-          <h3 class="text-center feature-describe">Universal</h3>
-          <p class="text-center feature-describe wow fadeInDown">From MLAB eletronical kit you can build various devices. From simple USB thermometers over scientific instruments to complex systems for controlling smart buildings.</p>
+          <h3 class="text-center feature-describe">{{_("Open-Source")}}</h3>
+          <p class="text-center feature-describe wow fadeInDown">{{_("Open-Source_text")}}</p>
+          <h3 class="text-center feature-describe">{{_("Universal")}}</h3>
+          <p class="text-center feature-describe wow fadeInDown">{{_("Universal_text")}}</p>
         </div>
       </div>
       </div>
@@ -270,19 +270,18 @@
         <h2>{{_('Cooperation')}}</h2>
         
       </div>
-      <div style="min-height: 50%; background-color: #E0E0E0; color: #546E7A; padding: 15pt; padding-top: 40pt;" >
+      {#<div style="min-height: 50%; background-color: #E0E0E0; color: #546E7A; padding: 15pt; padding-top: 40pt;" >
         <h2>{{_('Members')}}</h2>
-        
-      </div>
+      </div>#}
 
       </div>
       <div id="home_contact" style="min-height: 50%; background-color: #37474f; color: #cfd8dc; padding: 15pt; padding-top: 40pt;" >
-        <div style="width: 75%; margin: auto;">
+        <div style="width: 65%; margin: auto;">
         <!-- <h1 name="contact">Contacts</h1> -->
         <div class="row">
           
 
-          <div class="col-md-2">
+          <div class="col-md-6">
             <h3>{{_('Links')}}</h3>
             <a href="https://github.com/MLAB-project">GitHub</a><br>
             <a href="https://gitter.im/MLAB-project">Gitter</a><br>
@@ -291,23 +290,15 @@
             <a href="https://www.youtube.com/channel/UCCt-R6wkMmc3Aoi0c3IqpjA">YouTube</a><br>
             <br>
 
+          </div>
+          <div class="col-md-6">
+
             <h3>{{_('MLAB mailing list')}}</h3>
             <a href="mailto:mlab-users@googlegroups.com">mlab-users@googlegroups.com</a>
             <h3>{{_('E-mail contact')}}</h3>
             <a href="mailto:info@mlab.cz">info@mlab.cz</a>
           </div>
-          <div class="col-md-2">
-            <h3>{{_('Contact address')}}</h3>
-            <p>
-              U Jatek 19<br>
-              392 01 Soběslav<br>
-              {{_('Czech republic')}}<br>
-            </p>
-
-          </div>
-          <div class="col-md-8">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2603.7520981987973!2d14.702917052025029!3d49.26214447922757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb5ff7c170895868f!2sUniversal+Scientific+Technologies+s.r.o.!5e0!3m2!1scs!2scz!4v1503153151984" width="800" height="600" frameborder="0" style="border:0; height: 75%; width: 100%;" allowfullscreen></iframe>
-          </div>
+          
       </div>
     </div>
 

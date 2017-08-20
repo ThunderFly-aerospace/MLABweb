@@ -14,6 +14,7 @@
 "Contact address",Contact address
 "E-mail contact",E-mail contact
 "Czech republic",Czech republic
+"Language", Language
 "Lang",English
 "Czech", Czech
 "English", English
@@ -23,3 +24,14 @@
 "Modules",Modules
 "About",Aboute
 "Contact",Contact
+
+"what_is","WHAT IS"
+"mlab_what_is_text","MLAB is open-source eletronic building kit for scientists and amatuers."
+"Modular","Modular"
+"Modular_text", "All eletronical components separed on own module with necessary components. It allows you to develop your devices quickly and cheaply or simpyl expand with new components. Modules are stacked on aluminium base board which makes assemblies compact and robust."
+"Diversity","Diversity"
+"Diversity_text","MLAB contains various modules of many sensors, microcontrollers, translators or motor drivers."
+"Open-Source","Open-Source"
+"Open-Source_text","All documentation for use and manufacturing are publicly available."
+"Universal","Universal"
+"Universal_text","From MLAB eletronical kit you can build various devices. From simple USB thermometers over scientific instruments to complex systems for controlling smart buildings."

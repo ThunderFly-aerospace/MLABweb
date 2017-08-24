@@ -23,9 +23,6 @@ import os
 import re
 from six.moves.html_parser import HTMLParser
 from w3lib.html import replace_entities
-from xhtml2pdf import pisa 
-import StringIO
-import pypandoc
 from . import _sql, BaseHandler, sendMail
 import subprocess
 

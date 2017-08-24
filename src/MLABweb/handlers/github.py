@@ -34,7 +34,8 @@ class webhooks(BaseHandler):
             if '.json' in edit:
                 print "Tady je ASI nejaky upraveny modul :)",
                 project_file = edit
-                project_name = os.path.splitext(os.path.basename(edit))[0]
+                #project_name = os.path.splitext(os.path.basename(edit))[0]
+                project_name = os.path.basename(os.path.dirname(os.path.basename(edit)))
                 project_root = os.path.split(edit)[0]
                 print project_file, project_name
                 try:

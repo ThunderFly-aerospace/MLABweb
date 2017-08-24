@@ -73,8 +73,8 @@ def _sql(query, read=False, db="MLAB"):
         
 
         connection = pymysql.connect(host='localhost',
-                                     user='root',
-                                     password='root',
+                                     user=tornado.options.options.mysql_user,
+                                     password=tornado.options.options.mysql_pass,
                                      db=db,
                                      charset='utf8',
                                      cursorclass=pymysql.cursors.DictCursor)

@@ -41,7 +41,7 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
     <div class="card">
 
       {% if not module_data['image']%}
-      <img class="card-img-top" src="/static/noimage.png" data-src="/repos/{{module_data['root']}}/DOC/SRC/img/{{module_data['name']}}_Top_Big.jpg" alt="madule">
+      <img class="card-img-top" src="/static/noimage.png">
       {% else %}
       <img class="card-img-top" src="/static/noimage.png" data-src="/repos/{{module_data['root']}}/{{module_data['image']}}" alt="Module">
       {% end %}

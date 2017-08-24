@@ -23,6 +23,9 @@ from handlers import _sql, BaseHandler, basic
 
 tornado.options.define("port", default=10010, help="port", type=int)
 tornado.options.define("debug", default=False, help="debug mode")
+tornado.options.define("mysql_user", default=None, help="mysql user")
+tornado.options.define("mysql_pass", default=None, help="mysql pass")
+tornado.options.define("mlab_repos", default=None, help="Where is MLAB repository stored")
 
 
 class all(BaseHandler):
@@ -39,7 +42,7 @@ class WebApp(tornado.web.Application):
     def __init__(self, config={}):
 
         name = 'MLAB'
-        server = 'meteor2.astrozor.cz'
+        server = 'mlab.cz'
 
         server_url = '{}:{}'.format(server, tornado.options.options.port)
 
@@ -76,15 +79,15 @@ class WebApp(tornado.web.Application):
 
             #staticke soubory je vhodne nahradit pristupem primo z proxy serveru. (pak to tolik nevytezuje tornado)
             (r'/favicon.ico', tornado.web.StaticFileHandler, {'path': "/static/"}),
-            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': '/home/roman/repos/test-mlab-ui/src/MLABweb/static/'}),
-            (r'/repos/(.*)', tornado.web.StaticFileHandler, {'path': '/home/roman/repos/Modules/'}),
+            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': 'static/'}),
+            (r'/repos/(.*)', tornado.web.StaticFileHandler, {'path': tornado.options.options.mlab_repos}),
             (r'/git/hook/', github.webhooks),
             (r"/(.*)", all),
         ]
         settings = dict(
             cookie_secret="ROT13IrehaxnWrArwyrcfvQvixnAnFirgr",
-            template_path= "/home/roman/repos/test-mlab-ui/src/MLABweb/template/",
-            static_path= "/home/roman/repos/test-mlab-ui/src/MLABweb/static/",
+            template_path= "template/",
+            static_path= "static/",
             xsrf_cookies=False,
             name=name,
             server_url=server_url,
@@ -96,13 +99,14 @@ class WebApp(tornado.web.Application):
             debug=tornado.options.options.debug,
             autoreload=True
         )
-        tornado.locale.load_translations("/home/roman/repos/test-mlab-ui/src/MLABweb/locale/")
+        tornado.locale.load_translations("locale/")
         tornado.web.Application.__init__(self, handlers, **settings)
 
 def main():
     import os
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+    tornado.options.parse_config_file("/etc/mlab.conf")
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(WebApp())
     http_server.listen(tornado.options.options.port)

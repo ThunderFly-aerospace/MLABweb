@@ -18,6 +18,7 @@ from tornado.web import asynchronous
 from tornado import gen
 import git
 from git import Repo, Actor
+import os
 
 import re
 from six.moves.html_parser import HTMLParser
@@ -34,13 +35,16 @@ class permalink(BaseHandler):
     def get(self, module = None):
         print module
         module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
-        self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = glob.glob("/home/roman/repos/Modules/"+module_data['root']+"/DOC/SRC/img/*"))
+        self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/dac/img/*"))
 
 class home(BaseHandler):
     @asynchronous
     def get(self):
+        print "out"
+        print tornado.options.options.as_dict()
+        print tornado.options.OptionParser().as_dict()
         #module_data = _sql("SELECT * FROM MLAB.Modules WHERE status='2' ORDER by modif DESC")
-        module_data = _sql("SELECT * FROM `MLAB`.`Modules` WHERE status='2' AND `image` NOT LIKE '%QRcode%' AND CHARACTER_LENGTH(`longname_cs`) > 20 ORDER BY 'modif' DESC;")
+        module_data = _sql("SELECT * FROM `MLAB`.`Modules` WHERE status='2' AND `image` NOT LIKE '%QRcode%' AND CHARACTER_LENGTH(`longname_cs`) > 20 AND `mark` > 45 ORDER BY 'modif' DESC;")
         self.render("index.hbs",  _sql=_sql, parent=self, modules = module_data)
 
 class module_detail(BaseHandler):
@@ -49,7 +53,9 @@ class module_detail(BaseHandler):
         print module
         #self.write("ahoj")
         module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
-        self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = glob.glob("/home/roman/repos/Modules/"+module_data['root']+"/DOC/SRC/img/*"), documents = glob2.glob("/home/roman/repos/Modules/"+module_data['root']+"//**/*.pdf"))
+        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*")
+        print images
+        self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = images, documents = glob2.glob(tornado.options.options.mlab_repos+module_data['root']+"//**/*.pdf"))
 
 class module_comapare(BaseHandler):
     @asynchronous
@@ -57,8 +63,8 @@ class module_comapare(BaseHandler):
         print module, "< compare"
         module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
 
-        doc_cs = open('/home/roman/repos/Modules/'+module_data['root']+'/DOC/SRC/module.cs.html').read()
-        doc_en = open('/home/roman/repos/Modules/'+module_data['root']+'/DOC/SRC/module.en.html').read()
+        doc_cs = open(tornado.options.options.mlab_repos+module_data['root']+'/doc/src/module.cs.html').read()
+        doc_en = open(tornado.options.options.mlab_repos+module_data['root']+'/doc/src/module.en.html').read()
         self.render("modules.compare.hbs", _sql=_sql, module=module, module_data=module_data, doc_cs=doc_cs, doc_en=doc_en)
 
 class modules(BaseHandler):
@@ -108,9 +114,9 @@ class module_edit(BaseHandler):
             module_data = None
 
         try:
-            en = open('/home/roman/repos/Modules/'+module_data['root']+'/README.md').read()
-            print en
-            print "!!!!!!!!!!!!!!!!!11"
+            en = open(tornado.options.options.mlab_repos+module_data['root']+'/README.md').read()
+            #print en
+            #print "!!!!!!!!!!!!!!!!!11"
             module_data['longname_en']  = re.findall('\<!--- subtitle ---\>(.*)\<!--- Esubtitle ---\>', en)[0]
             module_data['short_en']  = re.findall('\<!--- description ---\>(.*)\<!--- Edescription ---\>', en)[0]
             print "pouzivam readme #EN"
@@ -120,9 +126,9 @@ class module_edit(BaseHandler):
         print "traying to open"
         try:
             print module_data['root']
-            cs = open('/home/roman/repos/Modules/'+module_data['root']+'/README.cs.md').read()
-            print cs
-            print "!!!!!!!!!!!!!!!!!11"
+            cs = open(tornado.options.options.mlab_repos+module_data['root']+'/README.cs.md').read()
+            #print cs
+            #print "!!!!!!!!!!!!!!!!!11"
             module_data['longname_cs']  = re.findall('\<!--- subtitle ---\>(.*)\<!--- Esubtitle ---\>', cs)[0]
             module_data['short_cs']  = re.findall('\<!--- description ---\>(.*)\<!--- Edescription ---\>', cs)[0]
             print "pouzivam readme #CS"
@@ -130,15 +136,17 @@ class module_edit(BaseHandler):
             print "readmeErrCS", e
 
         #print module_data
-        self.render("modules.edit.hbs",  parent=self, module_data=module_data, images = glob.glob("/home/roman/repos/Modules/"+module_data['root']+"/DOC/SRC/img/*"), _sql=_sql)
+        self.render("modules.edit.hbs",  parent=self, module_data=module_data, images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*"), _sql=_sql)
     
     @tornado.web.authenticated
     def post(self, module=None):
         print "POST: module_edit"
+        print self.request
         data = self.request.arguments
+        print data
         #print "##################################################33"
-
-        dotaz = "UPDATE `MLAB`.`Modules` SET `wiki`='%s', `ust`='%s', `longname_cs`='%s', `longname_en`='%s', `short_cs`='%s', `short_en`='%s', `doc_cs`='%s', `doc_en`='%s', image = '%s', status = '%s' WHERE `name`='%s';"  %(self.get_argument('wiki').strip(), self.get_argument('ust').strip(), self.get_argument('longname_cs'), self.get_argument('longname_en'), self.get_argument('short_cs'), self.get_argument('short_en'), self.get_argument('doc_cs'), self.get_argument('doc_en'), self.get_argument('image').strip(), self.get_argument('status').strip(), self.get_argument('name').strip())
+        module = self.get_argument('name').strip()
+        dotaz = "UPDATE `MLAB`.`Modules` SET `wiki`='%s', `ust`='%s', `longname_cs`='%s', `longname_en`='%s', `short_cs`='%s', `short_en`='%s', `doc_cs`='%s', `doc_en`='%s', image = '%s', status = '%s', mark = '%s' WHERE `name`='%s';"  %(self.get_argument('wiki').strip(), self.get_argument('ust').strip(), self.get_argument('longname_cs'), self.get_argument('longname_en'), self.get_argument('short_cs'), self.get_argument('short_en'), self.get_argument('doc_cs'), self.get_argument('doc_en'), self.get_argument('image').strip(), self.get_argument('status').strip(), self.get_argument('mark').strip(), self.get_argument('name').strip())
         _sql(dotaz) 
 
         data_json = {}
@@ -147,10 +155,23 @@ class module_edit(BaseHandler):
         for element in data:
             data_json[element] = data[element][0]
 
-        with open('/home/roman/repos/Modules/'+data_json['root']+'/module.json', 'w') as out:
+        with open(tornado.options.options.mlab_repos+data_json['root']+'/' + module + '.json', 'w') as out:
             json.dump(data_json, out, indent=4)
 
-        text_file = open('/home/roman/repos/Modules/'+self.get_argument('root')+'/README.md', "w")
+        '''
+        if '.jpg' in data_json['image'] or '.JPG' in data_json['image']:
+            #cmd = 'convert /home/roman/repos/Modules/'+data_json['root']+'/'+data_json['image'] +' -sampling-factor 4:2:0 -strip -quality 80 -interlace JPEG -colorspace RGB /home/roman/repos/Modules/'+ data_json['root'] +'/DOC/SRC/img/'+ module +'_title.jpg'
+            #print cmd
+            #process = subprocess.Popen(cmd)
+            process = subprocess.Popen(["convert", "/home/roman/repos/Modules/%s/%s" %(data_json['root'], data_json['image']),"-sampling-factor","4:2:0","-strip","-quality","80","-interlace","JPEG","-colorspace","RGB","/home/roman/repos/Modules/%s/DOC/SRC/img/%s_title.jpg" %(data_json['root'], module)])
+            process.wait()
+            data_json['image'] = tornado.options.options.mlab_repos+ data_json['root'] +'/DOC/SRC/img/'+ module +'_title.jpg'
+
+            dotaz = "UPDATE `MLAB`.`Modules` SET image = '%s' WHERE `name`='%s';"  %(data_json['image'], module)
+            _sql(dotaz) 
+        '''
+
+        text_file = open(tornado.options.options.mlab_repos+self.get_argument('root')+'/README.md', "w")
         text_file.write(
             """
 [Czech](./README.cs.md)
@@ -166,7 +187,7 @@ class module_edit(BaseHandler):
             """ %{'module':data_json['name'], 'image':data_json['image'], 'subtitle':data_json['longname_en'], 'text':data_json['short_en']})
         text_file.close()
 
-        text_file = open('/home/roman/repos/Modules/'+self.get_argument('root')+'/README.cs.md', "w")
+        text_file = open(tornado.options.options.mlab_repos+self.get_argument('root')+'/README.cs.md', "w")
         text_file.write(
             """
 [English](./README.md)
@@ -210,9 +231,9 @@ class module_edit(BaseHandler):
                 """ %{'module':data_json['name'],'subtitle':data_json['longname_cs'], 'doc':html_content, 'author':"Autor 1, Autor 2", 'abstract':data_json['short_cs']}
         #print html
 
-        text_file = open('/home/roman/repos/Modules/'+data['root'][0]+'/DOC/SRC/module.cs.html', "w")
-        text_file.write(html)
-        text_file.close()
+        #text_file = open(tornado.options.options.mlab_repos+data['root'][0]+'/DOC/SRC/module.cs.html', "w")
+        #text_file.write(html)
+        #text_file.close()
 
 
 
@@ -245,16 +266,16 @@ class module_edit(BaseHandler):
                 """ %{'module':data_json['name'],'subtitle':data_json['longname_en'], 'doc':html_content, 'author':"Autor 1, Autor 2", 'abstract':data_json['short_en']}
         #print html
 
-        text_file = open('/home/roman/repos/Modules/'+data['root'][0]+'/DOC/SRC/module.en.html', "w")
-        text_file.write(html)
-        text_file.close()
+        #text_file = open(tornado.options.options.mlab_repos+data['root'][0]+'/DOC/SRC/module.en.html', "w")
+        #text_file.write(html)
+        #text_file.close()
 
 
-        process = subprocess.Popen(["pandoc", "-s", '/home/roman/repos/Modules/'+data['root'][0]+'/DOC/SRC/module.cs.html', "-o", '/home/roman/repos/Modules/'+data['root'][0]+'/DOC/'+data_json['name']+'.cs.pdf', "--template=/home/roman/repos/test-mlab-ui/src/MLABweb/template/doc.en.latex"])
-        process = subprocess.Popen(["pandoc", "-s", '/home/roman/repos/Modules/'+data['root'][0]+'/DOC/SRC/module.en.html', "-o", '/home/roman/repos/Modules/'+data['root'][0]+'/DOC/'+data_json['name']+'.en.pdf', "--template=/home/roman/repos/test-mlab-ui/src/MLABweb/template/doc.en.latex"])
+        #process = subprocess.Popen(["pandoc", "-s", tornado.options.options.mlab_repos+data['root'][0]+'/DOC/SRC/module.cs.html', "-o", tornado.options.options.mlab_repos+data['root'][0]+'/DOC/'+data_json['name']+'.cs.pdf', "--template=/home/roman/repos/test-mlab-ui/src/MLABweb/template/doc.en.latex"])
+        #process = subprocess.Popen(["pandoc", "-s", tornado.options.options.mlab_repos+data['root'][0]+'/DOC/SRC/module.en.html', "-o", tornado.options.options.mlab_repos+data['root'][0]+'/DOC/'+data_json['name']+'.en.pdf', "--template=/home/roman/repos/test-mlab-ui/src/MLABweb/template/doc.en.latex"])
         
 
-        repo = Repo('/home/roman/repos/Modules')
+        repo = Repo(tornado.options.options.mlab_repos)
 
         repo.index.add([self.get_argument('root')])
 

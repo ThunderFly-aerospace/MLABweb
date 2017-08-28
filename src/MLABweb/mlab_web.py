@@ -65,6 +65,8 @@ class WebApp(tornado.web.Application):
             (r'/admin/modules', admin.modules),
             (r'/admin/module/new', all),
             (r'/admin/module/edit(.*)', admin.module_edit),
+            #(r'/WebSVN/(.*)', tornado.web.redirect, {'url': 'https://github.com/MLAB-project/Modules', 'permanent': True}),
+
 
             (r'/PermaLink/(.*)', admin.permalink),
 
@@ -82,7 +84,7 @@ class WebApp(tornado.web.Application):
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': 'static/'}),
             (r'/repos/(.*)', tornado.web.StaticFileHandler, {'path': tornado.options.options.mlab_repos}),
             (r'/git/hook/', github.webhooks),
-            (r"/(.*)", all),
+            (r"/(.*)", admin.home),
         ]
         settings = dict(
             cookie_secret="ROT13IrehaxnWrArwyrcfvQvixnAnFirgr",

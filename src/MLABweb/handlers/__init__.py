@@ -24,7 +24,7 @@ class BaseHandler(tornado.web.RequestHandler):
         #print tornado.locale.get("es_LA")
         #print help(tornado.locale.get().get_closest(['cs','en']))
         #print tornado.locale.get('cs_CZ')
-        print tornado.locale.get_supported_locales()
+        #print tornado.locale.get_supported_locales()
         print "language:"
         print self.get_user_locale()
         login = self.get_secure_cookie("login")

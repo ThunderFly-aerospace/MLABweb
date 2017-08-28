@@ -32,16 +32,16 @@ class webhooks(BaseHandler):
         for edit in edits:
             print edit
             if '.json' in edit:
-                print "Tady je ASI nejaky upraveny modul :)",
+                print "Tady je ASI nejaky upraveny modul :)"
                 project_file = edit
                 #project_name = os.path.splitext(os.path.basename(edit))[0]
-                project_name = os.path.basename(os.path.dirname(os.path.basename(edit)))
+                project_name = os.path.basename(os.path.dirname(edit))
                 project_root = os.path.split(edit)[0]
                 print project_file, project_name
                 try:
-                    #resp, content = httplib2.Http().request("https://raw.githubusercontent.com/roman-dvorak/Modules/master/"+project_file)
-                    print 'url', "https://api.github.com/repos/roman-dvorak/Modules/contents/"+project_file+"?ref=master"
-                    resp, content = httplib2.Http().request("https://api.github.com/repos/roman-dvorak/Modules/contents/"+project_file+"?ref=master")
+                    #resp, content = httplib2.Http().request("https://raw.githubusercontent.com/MLAB-project/Modules/master/"+project_file)
+                    print 'url', "https://api.github.com/repos/MLAB-project/Modules/contents/"+project_file+"?ref=master"
+                    resp, content = httplib2.Http().request("https://api.github.com/repos/MLAB-project/Modules/contents/"+project_file+"?ref=master")
                     print ""
                     print "content:" 
                     print content
@@ -72,9 +72,9 @@ class webhooks(BaseHandler):
         
         '''
         if project_file:
-            resp, content = httplib2.Http().request("https://raw.githubusercontent.com/roman-dvorak/Modules/master/"+project_file)
+            resp, content = httplib2.Http().request("https://raw.githubusercontent.com/MLAB-project/Modules/master/"+project_file)
         else:
-            resp, content = httplib2.Http().request("https://raw.githubusercontent.com/roman-dvorak/Modules/master/Sensors/PCRD02A/module.json")
+            resp, content = httplib2.Http().request("https://raw.githubusercontent.com/MLAB-project/Modules/master/Sensors/PCRD02A/module.json")
         print resp
         print content
         data = json.loads(content)

@@ -52,6 +52,8 @@
 
   </style>
 
+  <meta name="google-site-verification" content="BamBul7c5dU-TliZoElgBtZVRTD-naA3qWDkhNInBAs" /> 
+
 </head>
 <body style="padding-bottom: 0pt;">
   <!--{% include 'nav.hbs' %}-->
@@ -67,9 +69,9 @@
       <li class=""><a href="/modules?status=2">{{ _("Modules")}}</a>
       <li class=""><a href="#Cooperation">{{ _("Cooperation")}}</a></li>
       <li class=""><a href="#home_contact">{{ _("Contact")}}</a></li>
-      <li class=""><a hcef="https://github.com/MLAB-project">GitHub</a></li>
-      <li class=""><a hcef="http://wiki.mlab.cz/">Wiki</a></li>
-      {#<li>{%if current_user %} <a href="/logout/">{{ _("Log out")}} {{current_user['name']}} {%else%} <a href="/login/"> {{ _("Log in") }} {%end%}</a></li>#}
+      <li class=""><a href="https://github.com/MLAB-project">GitHub</a></li>
+      <li class=""><a href="http://wiki.mlab.cz/">Wiki</a></li>
+      {# <li>{%if current_user %} <a href="/logout/">{{ _("Log out")}} {{current_user['name']}} {%else%} <a href="/login/"> {{ _("Log in") }} {%end%}</a></li> #}
         
       <li class="submenu"> <a>{{_("Language")}}</a><div class="submenu_show"><ul>
         <li> <a onclick="setLang('cs_CZ')"><img src="/static/media/flags/CZ.png"> Cs </a></li>
@@ -198,7 +200,7 @@
 
         <div class="row">
           <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
-            <a href="http://www.ust.cz"><img src="/static/media/ust_logo.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
+            <a href="http://www.robozor.cz"><img src="/static/media/robozor_text.png" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
           </div>
           <div class="col-sm-12 col-md-3 col-md-push-6 text-center " style="height: 150pt;">
             <a href="https://www.ciirc.cvut.cz/"><img src="/static/media/ciirc_logo.jpg" style="max-width: 100%; max-height: 100%; vertical-align: middle;"></a>
@@ -266,14 +268,14 @@
       <div id="Cooperation" style="height: 100pt; background-image: url('/static/media/rmds.jpg');" class="home_static_background">
       </div>
 
-      {#<div style="min-height: 50%; background-color: #263238; color: #CFD8DC; padding: 15pt; padding-top: 40pt;" >
+      {# <div style="min-height: 50%; background-color: #263238; color: #CFD8DC; padding: 15pt; padding-top: 40pt;" >
         <h2>{{_('Members')}}</h2>
         
-      </div>#}
+      </div> #}
 
       <div style="min-height: 50%; background-color: #E0E0E0; color: #546E7A; padding-top: 40pt; text-align: center;" >
         <h2>{{_('Cooperation')}}</h2>
-        <div style=" text-align: center; font-variant: all-petite-caps; font-weight: 100; font-size: 2em; line-height: 0.9em; width: 50%; min-width: 300pt; margin: auto; margin-bottom: 50pt; margin-top: 20pt">Stále je spousta věcí, které stojí za to zlepšit, nebo vynaleznout. Proto nadšených sil není nikdy dost. Chceš přispět ve vývoji i ty? A ne jen čerpat již hotové?</div>
+        <div style=" text-align: center;  font-weight: 100; font-size: 2em; line-height: 1em; width: 50%; min-width: 300pt; margin: auto; margin-bottom: 50pt; margin-top: 20pt">Stále je spousta věcí, které stojí za to zlepšit, nebo vynaleznout. Proto nadšených sil není nikdy dost. Chceš přispět ve vývoji i ty? A ne jen čerpat již hotové?</div>
         
 
         <div class="row" style="padding: 30pt; background-color: #eceff1;margin-right: 0px;margin-left: 0px;">
@@ -321,20 +323,26 @@ Není potřeba se stydět a neváhat se na nás obrátit jakoukoliv cestou. Bude
 
           <div class="col-md-6">
             <h3>{{_('Links')}}</h3>
-            <a href="https://github.com/MLAB-project">GitHub</a><br>
-            <a href="https://gitter.im/MLAB-project">Gitter</a><br>
-            <a href="https://www.facebook.com/MLAB-203283666377414">Facebook</a><br>
-            <a href="https://plus.google.com/110124234725033215669">Google +</a><br>
-            <a href="https://www.youtube.com/channel/UCCt-R6wkMmc3Aoi0c3IqpjA">YouTube</a><br>
+            <a href="https://github.com/MLAB-project"><i class="fa fa-github" aria-hidden="true"></i> GitHub</a><br>
+            <a href="https://gitter.im/MLAB-project"><i class="fa fa-comments" aria-hidden="true"></i>
+Gitter</a><br>
+            <a href="https://www.facebook.com/MLAB-203283666377414"><i class="fa fa-facebook-official" aria-hidden="true"></i>
+ Facebook</a><br>
+            <a href="https://plus.google.com/110124234725033215669"><i class="fa fa-google-plus-official" aria-hidden="true"></i>
+Google +</a><br>
+            <a href="https://www.youtube.com/channel/UCCt-R6wkMmc3Aoi0c3IqpjA"><i class="fa fa-youtube-play" aria-hidden="true"></i>
+YouTube</a><br>
             <br>
 
           </div>
           <div class="col-md-6">
 
             <h3>{{_('MLAB mailing list')}}</h3>
-            <a href="mailto:mlab-users@googlegroups.com">mlab-users@googlegroups.com</a>
+            <a href="mailto:mlab-users@googlegroups.com"><i class="fa fa-users" aria-hidden="true"></i>
+ mlab-users@googlegroups.com</a>
             <h3>{{_('E-mail contact')}}</h3>
-            <a href="mailto:info@mlab.cz">info@mlab.cz</a>
+            <a href="mailto:info@mlab.cz"><i class="fa fa-envelope" aria-hidden="true"></i>
+info@mlab.cz</a>
           </div>
           
       </div>
@@ -360,4 +368,17 @@ Není potřeba se stydět a neváhat se na nás obrátit jakoukoliv cestou. Bude
   </script>
 
 
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-105355821-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 </html>

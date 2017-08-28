@@ -143,7 +143,7 @@ $('.selectpicker').selectpicker({
                   <option value=""> -- Vyberte obrázek -- </option>
                         {% for image in images %}
                     
-                        <option value='{{image[image.find("/DOC")+1:]}}' {% if module_data['image'] == image[image.find("/DOC")+1:] %} selected {%end%}>{{image[image.find("/DOC")+1:]}}</option>
+                        <option value='{{image[image.find("/doc")+1:]}}' {% if module_data['image'] == image[image.find("/doc")+1:] %} selected {%end%}>{{image[image.find("/doc")+1:]}}</option>
                     
                         {%end%}
                 </select>

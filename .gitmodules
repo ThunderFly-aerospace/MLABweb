@@ -23,3 +23,6 @@
 [submodule "src/MLABweb/static/lightbox"]
 	path = src/MLABweb/static/lightbox
 	url = git@github.com:ashleydw/lightbox.git
+[submodule "src/MLABweb/static/WebODF"]
+	path = src/MLABweb/static/WebODF
+	url = git@github.com:roman-dvorak/WebODF.git

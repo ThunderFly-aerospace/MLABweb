@@ -32,14 +32,16 @@ class permalink(BaseHandler):
     def get(self, module = None):
         print module
         module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
-        self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/dac/img/*"))
+        documents = glob2.glob(tornado.options.options.mlab_repos+module_data['root']+"//**/*.pdf")
+        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*")
+        self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = images, documents=documents)
 
 class home(BaseHandler):
     @asynchronous
-    def get(self):
-        print "out"
-        print tornado.options.options.as_dict()
-        print tornado.options.OptionParser().as_dict()
+    def get(self, data=None):
+        print "HomePage"
+        #print tornado.options.options.as_dict()
+        #print tornado.options.OptionParser().as_dict()
         #module_data = _sql("SELECT * FROM MLAB.Modules WHERE status='2' ORDER by modif DESC")
         module_data = _sql("SELECT * FROM `MLAB`.`Modules` WHERE status='2' AND `image` NOT LIKE '%QRcode%' AND CHARACTER_LENGTH(`longname_cs`) > 20 AND `mark` > 45 ORDER BY 'modif' DESC;")
         self.render("index.hbs",  _sql=_sql, parent=self, modules = module_data)

@@ -43,11 +43,11 @@
 		{% end %}
 
 		<tr>
-			{#<div class="module">{{module['name']}}{{module}} <small>edit</small></div>#}
+			{# <div class="module">{{module['name']}}{{module}} <small>edit</small></div> #}
 			<td class="status-{{module['status']}}">{{module['id']}}</td>
 			<td><b><a href="/module/{{module['name']}}/">{{module['name']}}</a>  <small><a href="/module/{{module['name']}}/edit/">edit</a></small></b></td>
 			<td><small>{{module['root']}}</small></td>
-			<td>{#{%for user in _sql("select Users.name from module_to_user INNER JOIN Users ON Users.id = module_to_user.user where module = %i;"%module['id'])%} {{user['name']}}, {%end%}#}</td>
+			<td>{# {%for user in _sql("select Users.name from module_to_user INNER JOIN Users ON Users.id = module_to_user.user where module = %i;"%module['id'])%} {{user['name']}}, {%end%} #}</td>
 			<td  data-toggle="tooltip" data-placement="top" title="{{module['image']}}">{% if module['image'] and 'QRcode' in module['image']%}<i class="fa fa-qrcode" aria-hidden="true"></i>{% elif module['image'] and len(module['image']) > 10 %}<a href="/repos/{{module['root']}}/{{module['image']}}"><i class="fa fa-check" aria-hidden="true"></i></a> {% else %}<i class="fa fa-times" aria-hidden="true"></i>  {{module['image']}}{%end%}</td>
 
 			<td  data-toggle="tooltip" data-placement="top" title="{{module['wiki']}}">{% if module['wiki'] and len(module['wiki']) > 10 %}<a href="{{module['wiki']}}"><i class="fa fa-check" aria-hidden="true"></i></a> {% else %}<i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>

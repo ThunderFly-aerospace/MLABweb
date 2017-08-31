@@ -36,18 +36,17 @@ All devices are controled directly form a computer
 "what_is","O co jde"
 "mlab_what_is_text","MLAB je open-source stavebnice pro vědce a konstruktéry"
 "Modular","Modularita"
-"Modular_text", "All eletronical components separed on own module with necessary components. It allows you to develop your devices quickly and cheaply or simpyl expand with new components. Modules are stacked on aluminium base board which makes assemblies compact and robust."
+"Modular_text", "Komplikovaná konstrukce je rozložena na elementární moduly, které obsahují jenom takové množství komponent, aby plnily svojí funkci v systému. To umožňuje rychlý vývoj nových zařízení i jejich následné obohacení o nové funkce. Moduly jsou skládány na základní desce z leteckého duralu, takže výsledná konstrukce je robustní a poměrně kompaktní."
 "Diversity","Rozmanitost"
-"Diversity_text","MLAB contains various modules of many sensors, microcontrollers, translators or motor drivers."
+"Diversity_text","Stavebnice obsahuje komponenty od různých výrobců součástek snímačů, mikrokontrolérů nebo budičů motorů. Není preferován žádný konkrétní výrobce."
 "Open-Source","Open-Source"
-"Open-Source_text","All documentation for use and manufacturing are publicly available."
-"Universal","Universal"
-"Universal_text","From MLAB eletronical kit you can build various devices. From simple USB thermometers over scientific instruments to complex systems for controlling smart buildings."
-
-"cooper_1", Stále je spousta věcí, které stojí za to zlepšit, nebo vynaleznout. Proto nadšených sil není nikdy dost. Chceš přispět ve vývoji i ty? A ne jen čerpat již hotové?
-"cooper_2_title", Mám vlastní modul a chci se podělit
-"cooper_2', Přestože se jedná o otevřený koncept, není možné vložit jakýkoliv modul bez dodržení konvence. Proto je dobré přečíst si pár odstavců, jak navrhovat MLAB modul.
-"cooper_3_title",Rád bych vyvíjel a nevím co
-"cooper_3",Nápadů máme zatím dostatek a nebojíme se o ně podělit. Stačí si vybrat dle chuti.
-"cooper_4_title",Nevím jak nato
-"cooper_4",Není potřeba se stydět a neváhat se na nás obrátit jakoukoliv cestou. Budeme se snažit nalézt společný cíl. Co nevíme zjistíme, co nemáme vymyslíme. Největší chyba je to nezkusit. 
+"Open-Source_text","Veškerá dokumentace pro použítí i výrobu je volně k dispozici."
+"Universal","Univerzálnost"
+"Universal_text","Ze stavebnice MLAB můžete poskládat různé přístroje a zařízení. Od jednoduchých měřidel po vědecké přístroje pro řízení experimentů."
+"cooper_1", "Stále je mnoho věcí, které stojí za to zlepšit, nebo vynaleznout. Proto nadšených sil není nikdy dost. Chceš přispět ve vývoji i ty? A ne jen konzumovat již připravené?"
+"cooper_2_title", "Mám nový vlastní modul a chci se o něj podělit"
+"cooper_2", "Přestože se jedná o otevřený koncept, není možné vložit jakýkoliv modul bez dodržení konvence. Proto je dobré přečíst si pár odstavců, jak navrhovat kvalitní MLAB modul."
+"cooper_3_title","Rád bych spolupracoval ale nevím na čem"
+"cooper_3","Nápadů máme zatím dostatek a nebojíme se o ně podělit. Stačí si vybrat něco z naší wiki."
+"cooper_4_title","Nevím jak na vývoj"
+"cooper_4","Není potřeba se stydět a váhat se na nás obrátit. Budeme se snažit nalézt společný cíl. Co nevíme zjistíme, co nemáme vymyslíme. Největší chyba je to nezkusit." 

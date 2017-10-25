@@ -31,9 +31,11 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
   <span class="breadcrumb-item active">{{module_data['name']}}</span>
 </nav>
 
-{%for cat in _sql("SELECT * FROM Categories INNER JOIN module_to_category ON module_to_category.category = Categories.id WHERE module_to_category.module = '%s';" %(module_data['id'])) %}
+{#{%for cat in _sql("SELECT * FROM Categories INNER JOIN module_to_category ON module_to_category.category = Categories.id WHERE module_to_category.module = '%s';" %(module_data['_id'])) %}
+{%for cat in db_web.Modules.Find() %}
+
 {{cat['name_cs']}}
-{%end%}
+{%end%}#}
 
 <div class="container">
 <div class="row">
@@ -55,8 +57,8 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
         <p class="card-text">{{module_data[_('short_cs')]}}</p>
         <a href="https://github.com/MLAB-project/Modules/tree/master/{{module_data['root']}}"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>
         {# <a href="https://github.com/roman-dvorak/Modules/tree/master/{{module_data['root']}}"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a> #}
-        {% if module_data['wiki'] != None %} <a href="{{module_data['wiki']}}"><i class="fa fa-book fa-2x" aria-hidden="true"></i></a> {% else %} <a href="http://wiki.mlab.cz/doku.php?id=cs:{{module_data['name'][:3]}}"><i class="fa fa-book fa-2x" aria-hidden="true"></i></a> {% end %}
-        {% if module_data['ust'] != None %} <a href="{{module_data['ust']}}"><i class="fa fa-shopping-basket fa-2x" aria-hidden="true"></i></a> {% end %}
+        {% if module_data['wiki'] != None and str(module_data['wiki']) != 'None'%} <a href="{{module_data['wiki']}}"><i class="fa fa-book fa-2x" aria-hidden="true"></i></a> {% else %} <a href="http://wiki.mlab.cz/doku.php?id={{_("lang_short")}}:{{module_data['name'][:-3]}}"><i class="fa fa-book fa-2x" aria-hidden="true"></i></a> {% end %}
+        {% if module_data['ust'] != None and str(module_data['ust']) != 'None'%} <a href="{{module_data['ust']}}"><i class="fa fa-shopping-basket fa-2x" aria-hidden="true"></i></a> {% end %}
         {%if current_user and current_user['is_staff'] %}<a href="edit"><i class="fa fa-pencil fa-2x" aria-hidden="true"></i></a> {% end %}
       </div>
     </div>

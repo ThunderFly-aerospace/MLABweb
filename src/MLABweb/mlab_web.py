@@ -57,18 +57,25 @@ class WebApp(tornado.web.Application):
             (r'/module/', admin.modules),
             (r'/module', admin.modules),
             (r'/modules/all', admin.modules_overview),
+
+            (r'/admin/', admin.home),
+            (r'/module', admin.modules),
+            (r'/module/', admin.modules),
+            (r'/modules', admin.modules),
+            (r'/modules/', admin.modules),
             (r'/modules/(.*)/', admin.modules),
             (r'/modules/(.*)', admin.modules),
-            (r'/modules', admin.modules),
-            (r'/admin/', admin.home),
             (r'/admin/module', admin.modules),
             (r'/admin/modules', admin.modules),
+            (r'/admin/module/', admin.modules),
+            (r'/admin/modules/', admin.modules),
             (r'/admin/module/new', all),
             (r'/admin/module/edit(.*)', admin.module_edit),
             #(r'/WebSVN/(.*)', tornado.web.redirect, {'url': 'https://github.com/MLAB-project/Modules', 'permanent': True}),
 
 
             (r'/PermaLink/(.*)', admin.permalink),
+            (r'/PermaLink/(.*)/', admin.permalink),
 
             (r'/login/oauth/github', auth.O_github),
             (r'/login/newuser', auth.newuser),

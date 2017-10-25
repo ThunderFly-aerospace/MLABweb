@@ -39,6 +39,10 @@ a.selected{
 
 </style>
 
+{%if current_user and current_user['is_staff'] %}
+<a href="https://www.mlab.cz/modules/all">Modules overview</a>
+{%end%}
+
 
 <h3> kategorie {{category}}</h3> 
 
@@ -88,36 +92,48 @@ a.selected{
 
 <div class="row">
 <div class="card-deck">
+
+{#
+{% for module in modules %}
+{%try%}
+{{module['status']}}
+{% except %}
+CHYBA {{module['_id']}}
+{%end%}
+<hr>
+{% end %}#}
   
 {% for module in modules %}
+
 <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
     <div class="card">
-    	<a href="/module/{{module['name']}}/">
-    	{% if not module['image']%}
-    	<img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['name']}}_Top_Big.jpg" alt="{{module['name']}}">
+    	<a href="/module/{{module['_id']}}/">
+    	{% if not module.get('image', None)%}
+    	<img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['_id']}}_Top_Big.jpg" alt="{{module['_id']}}">
     	{% else %}
-    	<img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/{{module['image']}}" alt="{{module['name']}}">
+    	<img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/{{module['image']}}" alt="{{module['_id']}}">
     	{% end %}
     	</a>
+  
 		<div class="status status-{{module['status']}}"></div>
     	<div class="card-block" style="padding: 10pt;">
-    		
-      	<h4 class="card-title"><a href="/module/{{module['name']}}/">{{module['name']}}</a></h4>
-      	<p class="card-text">
-			{{module[_('short_cs')]}}
-		</p>
-		</div>
+	      	<h4 class="card-title"><a href="/module/{{module['_id']}}/">{{module['_id']}}</a></h4>
+	      	<p class="card-text">
+				{{module[_('short_cs')]}}
+			</p>
+		</div>{#
 		{%if current_user and current_user['is_staff'] %}
-	    <div class="card-footer">
-	      <small class="text-muted"><a href="/module/{{module['name']}}/edit">edit</a></small>
-	    </div>{%end%}
+	   		 <div class="card-footer">
+	      		<small class="text-muted"><a href="/module/{{module['_id']}}/edit">edit</a></small>
+	    	</div>
+	    {%end%} #}
 	</div>
 </div>
 {% end %}
 
 </div>
 </div>
-Zobrazeno <i>{{len(modules)}}</i> položek.
+Zobrazeno <i>{{modules.count()}}</i> položek.
 
 {% end %}
 

@@ -1,9 +1,10 @@
-
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import tornado
 import json
+from bson.json_util import dumps
+
 import glob
 import glob2
 import time
@@ -16,8 +17,8 @@ from tornado import options
 from tornado import web
 from tornado.web import asynchronous
 from tornado import gen
-import git
-from git import Repo, Actor
+#import git
+#from git import Repo, Actor
 import os
 
 import re
@@ -33,7 +34,7 @@ class permalink(BaseHandler):
         print module
         module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
         documents = glob2.glob(tornado.options.options.mlab_repos+module_data['root']+"//**/*.pdf")
-        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*")
+        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"doc/img/*")
         self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = images, documents=documents)
 
 class home(BaseHandler):
@@ -43,18 +44,24 @@ class home(BaseHandler):
         #print tornado.options.options.as_dict()
         #print tornado.options.OptionParser().as_dict()
         #module_data = _sql("SELECT * FROM MLAB.Modules WHERE status='2' ORDER by modif DESC")
-        module_data = _sql("SELECT * FROM `MLAB`.`Modules` WHERE status='2' AND `image` NOT LIKE '%QRcode%' AND CHARACTER_LENGTH(`longname_cs`) > 20 AND `mark` > 45 ORDER BY 'modif' DESC;")
-        self.render("index.hbs",  _sql=_sql, parent=self, modules = module_data)
+        #module_data = _sql("SELECT * FROM `MLAB`.`Modules` WHERE status='2' AND `image` NOT LIKE '%QRcode%' AND CHARACTER_LENGTH(`longname_cs`) > 20 AND `mark` > 45 ORDER BY 'modif' DESC;")
+        #print(module_data)
+        md = self.db_web.Modules.find({ "$and": [{'status': 2}, {'mark': {"$gte": 45}}, {"$where": "this.longname_cs.length > 20"}, {'image':{"$not":re.compile("QRcode")}}]})
+        #print(module_data)
+        self.render("index.hbs",  _sql=_sql, parent=self, modules = md)
 
 class module_detail(BaseHandler):
     @asynchronous
     def get(self, module = None):
         print module
         #self.write("ahoj")
-        module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
-        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*")
-        print images
-        self.render("modules.detail.hbs", _sql=_sql, module=module, module_data=module_data, images = images, documents = glob2.glob(tornado.options.options.mlab_repos+module_data['root']+"//**/*.pdf"))
+        #module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
+        module_data = self.db_web.Modules.find({"_id": module})[0]
+        #print type(module_data)
+        #print module_data
+        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"doc/img/*")
+        #print images
+        self.render("modules.detail.hbs", _sql=_sql, db_web = self.db_web, module=module, module_data=module_data, images = images, documents = glob2.glob(tornado.options.options.mlab_repos+module_data['root']+"//**/*.pdf"))
 
 class module_comapare(BaseHandler):
     @asynchronous
@@ -80,16 +87,22 @@ class modules(BaseHandler):
         if category:
             if status:
                 print "category_status"
-                modules = _sql("SELECT * FROM `MLAB`.`module_to_category` INNER JOIN MLAB.Modules ON Modules.id = module_to_category.module WHERE `category` = (SELECT id from `MLAB`.`Categories` WHERE `Categories`.`name` = '%s' AND status IN (%s) ORDER by name);" %(category, status))
+                #modules = _sql("SELECT * FROM `MLAB`.`module_to_category` INNER JOIN MLAB.Modules ON Modules.id = module_to_category.module WHERE `category` = (SELECT id from `MLAB`.`Categories` WHERE `Categories`.`name` = '%s' AND status IN (%s) ORDER by name);" %(category, status))
             else:
                 print "category_only"
-                modules = _sql("SELECT * FROM `MLAB`.`module_to_category` INNER JOIN MLAB.Modules ON Modules.id = module_to_category.module WHERE `category` = (SELECT id from `MLAB`.`Categories` WHERE `Categories`.`name` = '%s' ORDER by name);" %(category))
+                #modules = _sql("SELECT * FROM `MLAB`.`module_to_category` INNER JOIN MLAB.Modules ON Modules.id = module_to_category.module WHERE `category` = (SELECT id from `MLAB`.`Categories` WHERE `Categories`.`name` = '%s' ORDER by name);" %(category))
+                #modules = self.Modules.find()
+            modules = []
         else:
             if status:
-                modules = _sql("SELECT * FROM Modules WHERE status IN (%s) ORDER by name;" %(status))
+                print "+++++STATUS"
+                print status, type(status)
+                #modules = _sql("SELECT * FROM Modules WHERE status IN (%s) ORDER by name;" %(status))
+                modules = self.db_web.Modules.find({"status":{"$exists":True, "$in":[int(status)]}}) #.sort({"_id": 1})
             else:
-                modules = _sql("SELECT * FROM Modules ORDER by name;")
-
+                #modules = _sql("SELECT * FROM Modules ORDER by name;")
+                modules = self.db_web.Modules.find({"status":{"$exists":True}}) #.sort({"_id": 1})
+        #print dumps(modules)
         self.render("modules.hbs",  _sql=_sql, parent=self, category = category, modules = modules, status = status)
 
 class modules_overview(BaseHandler):
@@ -98,7 +111,8 @@ class modules_overview(BaseHandler):
     def get(self):
         print "modules overview"
         order = self.get_argument('order', 'id')
-        modules = _sql("SELECT * FROM Modules ORDER BY %s" %order)
+        #modules = _sql("SELECT * FROM Modules ORDER BY %s" %order)
+        modules = self.db_web.Modules.find({})
         #modules = _sql("SELECT  Modules.*,  GROUP_CONCAT(Users.name SEPARATOR ',') module_to_user FROM MLAB.Modules RIGHT JOIN module_to_user ON module_to_user.module = Modules.id INNER JOIN Users ON module_to_user.user = Users.id GROUP BY module_to_user.module ORDER BY Module.id;")
         self.render("modules.overview.hbs",  _sql=_sql, parent=self, modules = modules)
 

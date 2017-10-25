@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import MySQLdb as mdb
+import pymongo
 
 import os
 import pymysql.cursors
@@ -19,6 +20,14 @@ import os
 
 
 class BaseHandler(tornado.web.RequestHandler):
+
+    def prepare(self):
+        self.xsrf_token
+       
+        self.db_web = pymongo.MongoClient('localhost', 27017).MLABweb
+        print(self.db_web)
+
+
     def get_current_user(self):
         #print help(tornado.locale.get())
         #print tornado.locale.get("es_LA")

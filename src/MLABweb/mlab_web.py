@@ -31,7 +31,7 @@ tornado.options.define("mlab_repos", default=None, help="Where is MLAB repositor
 class all(BaseHandler):
     def get(self, arg=None):
         #self.write("ACK")
-        self.render("index.hbs",  _sql=_sql, parent=self)
+        self.render("index.hbs", parent=self)
 
 
     def post(self, arg=None):
@@ -50,6 +50,7 @@ class WebApp(tornado.web.Application):
             (r'/', admin.home),
             (r'/module/(.*)/edit/', admin.module_edit),
             (r'/module/(.*)/edit', admin.module_edit),
+            (r'/module/(.*)/edit/upload_image/', admin.moduleImageUpload),
             (r'/module/(.*)/compare/', admin.module_comapare),
             (r'/module/(.*)/compare', admin.module_comapare),
             (r'/module/(.*)/', admin.module_detail),
@@ -73,9 +74,13 @@ class WebApp(tornado.web.Application):
             (r'/admin/module/edit(.*)', admin.module_edit),
             #(r'/WebSVN/(.*)', tornado.web.redirect, {'url': 'https://github.com/MLAB-project/Modules', 'permanent': True}),
 
+            (r'/categories/(.*)', admin.categories),
+            (r'/categories/', admin.categories),
+            (r'/categories', admin.categories),
+            (r'/users', admin.home),
 
-            (r'/PermaLink/(.*)', admin.permalink),
             (r'/PermaLink/(.*)/', admin.permalink),
+            (r'/PermaLink/(.*)', admin.permalink),
 
             (r'/login/oauth/github', auth.O_github),
             (r'/login/newuser', auth.newuser),

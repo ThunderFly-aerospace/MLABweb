@@ -25,11 +25,15 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
 </script>
 
 
+
+{% for cat in module_data.get('category[]', []) %}
+
 <nav class="breadcrumb">
   <a class="breadcrumb-item" href="/">Home</a>
-  <a class="breadcrumb-item" href="/modules/">modules</a>
+  <a class="breadcrumb-item" href="/modules/{{cat}}/">{{cat}}</a>
   <span class="breadcrumb-item active">{{module_data['name']}}</span>
 </nav>
+{% end %}
 
 {#{%for cat in _sql("SELECT * FROM Categories INNER JOIN module_to_category ON module_to_category.category = Categories.id WHERE module_to_category.module = '%s';" %(module_data['_id'])) %}
 {%for cat in db_web.Modules.Find() %}
@@ -51,6 +55,10 @@ $(document).on('click', '[data-toggle="lightbox"]', function(event) {
       <div class="status status-{{module_data['status']}}"></div>
 
       <div class="card-block" style="padding: 10pt;">
+
+            <div style="margin-bottom: 8pt;">{% for tag in module_data.get('category[]', []) %}
+              <span class="badge badge-pill badge-success">{{tag}}</span>
+            {%end%}</div>
         <h2 class="card-title">{{module_data['name']}}</h2>
         <h4 class="card-subtitle mb-2 text-muted">{{module_data[_('longname_cs')]}}</h4>
         <!-- <h4 class="card-subtitle mb-2 text-muted">{{module_data['longname_en']}}</h4> -->

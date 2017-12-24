@@ -34,24 +34,29 @@ class BaseHandler(tornado.web.RequestHandler):
         #print help(tornado.locale.get().get_closest(['cs','en']))
         #print tornado.locale.get('cs_CZ')
         #print tornado.locale.get_supported_locales()
-        print "language:"
-        print self.get_user_locale()
+        #print "language:"
+        #print self.get_user_locale()
         login = self.get_secure_cookie("login")
         token = self.get_secure_cookie("token")
+        #print "login", login
+        #print "taken", token
         if not login:
             return None
         else:
-            return _sql("SELECT * from Users WHERE login = '%s'" %(login))[0]
+            #return _sql("SELECT * from Users WHERE login = '%s'" %(login))[0]
+            user = self.db_web.Users.find_one({"_id": login})
+            #print user
+            print "Logen in", user['civil_name']
+            return user
 
-    
     def get_user_locale(self):
         if not self.get_cookie("locale"):
-            print "Locale neni nastaveno - nastavuji en_UK"
+            #print "Locale neni nastaveno - nastavuji en_UK"
             tornado.locale.set_default_locale("en_UK")
             return self.get_browser_locale()
 
         locale =  self.get_cookie("locale")
-        print "locale:", locale
+        #print "locale:", locale
         tornado.locale.set_default_locale(locale)
         return self.get_browser_locale()
     
@@ -74,8 +79,10 @@ Subject: %s
         smtp.close()
 
 
+def _sql():
+    pass
 
-
+'''
 def _sql(query, read=False, db="MLAB"):
         print "#>", query
         #connection = mdb.connect(host="localhost", user="root", passwd="root", db=db, use_unicode=True, charset="utf8", cursorclass=mdb.cursors.DictCursor)
@@ -103,3 +110,4 @@ def _sql(query, read=False, db="MLAB"):
                 print "Err", e
                 connection.close()
                 return ()
+'''

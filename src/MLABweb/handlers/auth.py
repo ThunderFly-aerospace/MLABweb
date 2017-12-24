@@ -4,7 +4,7 @@
 import tornado.escape
 from tornado import web
 from tornado import websocket
-from . import _sql, BaseHandler, sendMail
+from . import BaseHandler, sendMail#, _sql
 import json
 import datetime
 import smtplib
@@ -53,10 +53,10 @@ class O_github(BaseHandler):
         user_j = github.get('https://api.github.com/user').json()
         email_j = github.get('https://api.github.com/user/emails').json()
         print 'GithubLogin', github_code, user_j, email_j
-        user_db=_sql("SELECT count(*) as count FROM Users WHERE login = '%s';" %(user_j['login']))[0]['count']
+        user_db = self.db_web.Users.find({"_id":user_j['login']}).count()
 
-        print token
-        print user_j
+        print ">> Token:", token
+        print ">> User:", user_j
         print "------------"
 
         email = None
@@ -65,7 +65,7 @@ class O_github(BaseHandler):
                 email = e['email']
             else:
                 print "mail vedlejsi", e
-        print email
+        print ">>Email:", email
 
 
         self.set_secure_cookie('login', user_j['login'])
@@ -74,27 +74,34 @@ class O_github(BaseHandler):
         utcnow = datetime.datetime.utcnow().isoformat()
 
         if user_db == 1: # uzivatel je zpet :)
-            _sql("UPDATE `Users` SET `name` = '%s', `email` = '%s', `service` = '%s', `last_login` = '%s' WHERE login = '%s';" 
-                %(user_j['name'], email, "github", utcnow, user_j['login']))
+            print "Uzivatel je zpet :)"
+            self.db_web.Users.update_one({"_id": user_j['login']},{ "$set": {"email": email, "last_login": datetime.datetime.utcnow()}})
             print "redir /"
             self.redirect("/")
 
         elif user_db == 0: # Novy uzivatel
-            _sql("INSERT INTO `Users` (`login`, `name`, `email`, `service`, `date_joined`, `last_login`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s');"
-                %(user_j['login'], user_j['name'], email, "github", utcnow, utcnow))
+            self.db_web.Users.insert_one({
+                "_id": user_j['login'],
+                "login": user_j['login'],
+                "name": user_j['name'],
+                "civil_name": user_j['name'],
+                "is_staff": False,
+                "email": email,
+                "service": "github",
+                "date_joined": datetime.datetime.utcnow(),
+                "last_login": datetime.datetime.utcnow(),
+                "service_data": user_j,
+
+                }
+            )
 
             #sendMail("%s<%s>"%(user_j['name'],email),"Welcome to  RTbolidozor", open("/home/roman/repos/RTbolidozor/emails/new_reg","r").read()%(user_j['name']))
             print "novy uzivatel"
             self.redirect("/newuser")
 
         else:
-            print  "Chyba, prosím nahlašte do mailinglistu Bolidozoru č.0003"
-            self.write("Chyba, prosím nahlašte do mailinglistu Bolidozoru č.0003")
-
-
-        #_sql("REPLACE INTO `.`geozor_fileindex` SET `filename_original` = '%s', `filename` = '%s', `id_observer` = '%d', `id_server` = '%d', `filepath` = '%s', `obstime` = '%s', `uploadtime` = '%s', `lastaccestime` = '%s', `indextime` = '%s', `checksum` = '%s';" %(filename_original, filename, id_observer, id_server, filepath, uploadtime, uploadtime, lastaccestime, indextime, checksum))
-        #self.redirect('https://github.com/login/oauth/authorize?client_id=%s' %("ed66f4255ebebd63b335"), permanent=True)
-
+            print  "Chyba, prosím nahlašte do mailinglistu Bolidozoru GitHub č.0003"
+            self.write("Chyba, prosím nahlašte do mailinglistu Bolidozoru GitHub č.0003 nebo na email dms@mlab.cz")
 
 class newuser(BaseHandler):
     def get(self):

@@ -8,6 +8,12 @@
 
 </style>
 
+ <script type="text/javascript">
+   var images = [{% for image in images %}
+      {title: '{{image}}', value: 'http://www.mlab.cz/repos/{{image[13:]}}'},
+      {% end %}]
+ </script>
+
 
   <script>
   tinymce.init({
@@ -19,7 +25,8 @@
     autoresize_min_height: 350,
     autoresize_max_height: 500,
     toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pagebreak table image code | removeformat tools fullscreen",
-    pagebreak_separator: "<!-- break -->"
+    pagebreak_separator: "<!-- break -->",
+    image_list: images,
   });
   </script>
 
@@ -34,7 +41,8 @@
     autoresize_min_height: 350,
     autoresize_max_height: 500,
     toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pagebreak table image code | removeformat tools fullscreen",
-    pagebreak_separator: "<!-- break -->"
+    pagebreak_separator: "<!-- break -->",
+    image_list: images,
   });
   </script>
 
@@ -49,7 +57,8 @@
     autoresize_min_height: 350,
     autoresize_max_height: 500,
     toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pagebreak table image code | removeformat tools fullscreen",
-    pagebreak_separator: "<!-- break -->"
+    pagebreak_separator: "<!-- break -->",
+    image_list: images,
   });
   </script>
 
@@ -64,12 +73,23 @@
     autoresize_min_height: 350,
     autoresize_max_height: 500,
     toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pagebreak table image code | removeformat tools fullscreen",
-    pagebreak_separator: "<!-- break -->"
+    pagebreak_separator: "<!-- break -->",
+    image_list: images,
   });
   </script>
 
 
 <script type="text/javascript">
+
+    function get_array_from_select(id) {
+      var el = $(id).find(':selected')
+      var list = []
+      for (var i = 0; i < el.length; i++) {
+        list.push(el[i].value);
+        console.log(el[i].value);
+      }
+      return list
+    }
 
     $(document).ready(function() {
     $("#save").click(function(event) {
@@ -83,14 +103,16 @@
             mark: document.getElementById('mark').value,
             image: document.getElementById('image').value,
             status: document.getElementById('status').value,
-            autor: null,
-            category: null,
+            //autor: null,
+            //category: null,
             longname_cs: document.getElementById('longname_cs').value,
             longname_en:  document.getElementById('longname_en').value,
             short_cs: document.getElementById('short_cs').value,
             short_en:  document.getElementById('short_en').value,
             doc_cs: window.parent.tinymce.get('doc_cs').getContent(),
             doc_en:  window.parent.tinymce.get('doc_en').getContent(),
+            category: get_array_from_select('#categories'),
+            author:  get_array_from_select('#authors'),
         },
         function(data, status){
 
@@ -105,6 +127,51 @@ $('.selectpicker').selectpicker({
   style: 'btn-info',
   size: 4
 });
+
+var reader = new FileReader();
+var upload = function() {
+    var photo = document.getElementById("photo");
+    console.log(photo);
+    var file = photo.files[0];
+    console.log(file);
+    console.log("File name: " + file.name);
+    console.log("File size: " + file.size);
+    console.log("Binary content: ", reader.readAsBinaryString(file));
+    //console.log("Text content: " + file.getAsText(""));
+
+    var formData = new FormData();
+
+    // add assoc key values, this will be posts values
+    formData.append("file", file.file, file.name);
+    formData.append("upload_file", true);
+
+    $.ajax({
+        type: "POST",
+        url: "upload_image/",
+        xhr: function () {
+            var myXhr = $.ajaxSettings.xhr();
+            if (myXhr.upload) {
+                myXhr.upload.addEventListener('progress', that.progressHandling, false);
+            }
+            return myXhr;
+        },
+        success: function (data) {
+            console.log("success");
+        },
+        error: function (error) {
+            // handle error
+            console.log("error", error);
+        },
+        async: true,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        timeout: 60000
+    });
+
+    return false;
+};
 
 
 
@@ -127,7 +194,7 @@ $('.selectpicker').selectpicker({
           <input type="text" class="form-control" id="root" {% if module_data%} value = "{{module_data['root']}}" disabled="" {%end %}></input>
         </div>
         <div class="form-group">
-          <label name="post-title" for="wiki">Wiki</label>
+          <label name="post-title" for="wiki">Wiki <small>Pokud odkaz nebude zadán, bude vygenerován automaticky.</small></label>
           <input type="text" class="form-control" id="wiki" {% if module_data%} value = "{{module_data['wiki']}}" {%end %}></input>
         </div>
         <div class="form-group">
@@ -135,19 +202,20 @@ $('.selectpicker').selectpicker({
           <input type="text" class="form-control" id="ust" {% if module_data%} value = "{{module_data['ust']}}" {%end %}></input>
         </div>
         <div class="form-group">
+          <label name="post-title" for="image">Náhledy obrázků. <small>Jsou ve stejném pořadí jako je seznam pro výběr hlavního obrázku.</small></label>
+              <div>{% for image in images %}
+                        <img src="http://www.mlab.cz/repos/{{image[13:]}}" style="height: 3cm;">
+              {%end%}</div>
           <label name="post-title" for="image">Image</label>
               <div class="input-group">
                 <!-- <input type="text" class="form-control" id="image" {% if module_data%} value = "{{module_data['image']}}" {%end %}></input> -->
-   
                 <select class="form-control custom-select" id="image">
                   <option value=""> -- Vyberte obrázek -- </option>
                         {% for image in images %}
-                    
-                        <option value='{{image[image.find("/doc")+1:]}}' {% if module_data['image'] == image[image.find("/doc")+1:] %} selected {%end%}>{{image[image.find("/doc")+1:]}}</option>
+                        <option value='{{image[image.find("/doc"):]}}' {% if module_data['image'] == image[image.find("/doc"):] %} selected {%end%}>{{image[image.find("/doc"):]}}</option>
                     
                         {%end%}
                 </select>
-
           </div>
         </div>
 
@@ -155,42 +223,52 @@ $('.selectpicker').selectpicker({
 
         <div class="form-group">
 
-        <div class="form-group">
-        <label name="post-title" for="authors">Autoři (zatím nefunkční)</label>
-        <select  class="form-control selectpicker" id="authors" >
-        {% for user in _sql("SELECT * FROM Users ORDER BY ID") %}
-        <option>{{user['name']}}</option>
-        {% end %}
-        </select>
-        </div>
-        
-        <hr>
-        {% for user in _sql("SELECT * FROM Users ORDER BY ID") %}
-        {{user['name']}}<br>
-        {% end %}<hr>
+        <form onsubmit="return upload();">
+        <fieldset>
+          <legend>Upload photo - upload fotek zatim neni funkcni</legend>
+          <input type="file" name="photo" id="photo">
+          <input type="button" value="Upload" onclick="upload()">
+        </fieldset>
+      </form>
 
         <div class="form-group">
         <label name="post-title" for="status">Status</label>
         <select class="form-control custom-select" id="status">
-          <option value="0" {% if module_data['status'] == 0 %} selected {% end %}>Návrh</option>
-          <option value="1" {% if module_data['status'] == 1 %} selected {% end %}>V přípravě</option>
-          <option value="2" {% if module_data['status'] == 2 %} selected {% end %}>Produkce</option>
-          <option value="3" {% if module_data['status'] == 3 %} selected {% end %}>Nahrazen</option>
-          <option value="4" {% if module_data['status'] == 4 %} selected {% end %}>Starý</option>
+          <option value="0" {% if str(module_data['status']) == "0" %} selected {% end %}>Návrh</option>
+          <option value="1" {% if str(module_data['status']) == "1" %} selected {% end %}>V přípravě</option>
+          <option value="2" {% if str(module_data['status']) == "2" %} selected {% end %}>Produkce</option>
+          <option value="3" {% if str(module_data['status']) == "3" %} selected {% end %}>Nahrazen</option>
+          <option value="4" {% if str(module_data['status']) == "4" %} selected {% end %}>Starý</option>
         </select>
         </div>
+
+
         <div class="form-group">
-        <label name="post-title" for="exampleSelect2">Kategorie (zatím nefunkční)</label>
-        <select multiple class="form-control " id="exampleSelect2">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
+        <label name="post-title" for="exampleSelect2">Kategorie</label>
+        <select  class="multiselect form-control" name="categories[]" multiple="multiple" id="categories">
+          {% for cat in db_web.Category.find() %}
+            <option {% if cat['_id'] in module_data.get('category[]', [])%}selected{%end%} value="{{cat['_id']}}">{{cat.get('cs', "No name")}} <small>[{{cat['path']}}{{cat['_id']}}]</small></option>
+          {% end %}
         </select>
         </div>
+
+
         <div class="form-group">
-          <label>Mark (hodnocení modulu 0-100)</label>
+        <label name="post-title" for="exampleSelect2">Autoři</label>
+        <select  class="multiselect form-control" name="authors[]" multiple="multiple" id="authors">
+          {% for user in db_web.Users.find() %}
+            <option {% if user['_id'] in module_data.get('author[]', [])%}selected{%end%} value="{{user['_id']}}">{{user.get('civil_name', "No civil name")}} <small>({{user['_id']}})</small></option>
+          {% end %}
+        </select>
+        </div>
+        <script type="text/javascript">
+          $(document).ready(function() {
+              $('.multiselect').select2();
+          });
+        </script>
+
+        <div class="form-group">
+          <label>Mark (hodnocení modulu 0-100, odpovídá to bodování; tzn. větší číslo větší kvalita modulu)</label>
           <input type="number" class="form-control" min="0" max="100" step="1" value="{{module_data['mark']}}" id="mark">
         </div>
         

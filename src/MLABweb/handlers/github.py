@@ -32,40 +32,41 @@ class webhooks(BaseHandler):
         for edit in edits:
             print edit
             if '.json' in edit:
-                print "Tady je ASI nejaky upraveny modul :)"
+                print "Tady je ASI nejaky upraveny nebo novy modul :)", 
                 project_file = edit
                 #project_name = os.path.splitext(os.path.basename(edit))[0]
                 project_name = os.path.basename(os.path.dirname(edit))
                 project_root = os.path.split(edit)[0]
                 print project_file, project_name
                 try:
-                    #resp, content = httplib2.Http().request("https://raw.githubusercontent.com/MLAB-project/Modules/master/"+project_file)
                     print 'url', "https://api.github.com/repos/MLAB-project/Modules/contents/"+project_file+"?ref=master"
                     resp, content = httplib2.Http().request("https://api.github.com/repos/MLAB-project/Modules/contents/"+project_file+"?ref=master")
-                    print ""
-                    print "content:" 
-                    print content
-                    print ""
-                    print "json content:"
-                    print json.loads(content)['content']
-                    print ""
-                    print "decode:"
-                    print base64.b64decode(json.loads(content)['content'])
+                    #print ""
+                    #print "json content:"
+                    #print json.loads(content)['content']
+                    #print ""
 
                     file = json.loads(base64.b64decode(json.loads(content)['content']))
                     print json.dumps(file, indent=4, sort_keys=True)
 
-                    modules = _sql("select count(*) FROM `MLAB`.`Modules` WHERE `name`='%s';"%(project_name))[0]['count(*)']
-                    print "MODULES:", modules
-                    if modules == 0:
-                        print "Novy modul"
-                        _sql("INSERT INTO `MLAB`.`Modules` (`name`, `wiki`, `ust`, `root`, `image`, `longname_cs`, `longname_en`, `short_cs`, `short_en`, `doc_cs`, `status`, `type`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');"
-                            %(project_name, file['wiki'], file['ust'], project_root, file['image'], file['longname_cs'], file['longname_en'], file['short_cs'], file['short_en'], file['doc_cs'], file['status'], '0'))
+                    #modules = _sql("select count(*) FROM `MLAB`.`Modules` WHERE `name`='%s';"%(project_name))[0]['count(*)']
+                    modules = self.db_web.Modules.find({"_id": project_name}).count()
+                    print "MODULES:", modules, "(0 novy modul, 1 Existujici modul)"
 
-                    else:
-                        print "Existujici modul"
-                        _sql("UPDATE `MLAB`.`Modules` SET `wiki`='%s', `ust`='%s', `image`='%s', `longname_cs`='%s', `longname_en`='%s', `short_cs`='%s', `short_en`='%s', `doc_cs`='%s', `doc_en`='%s', `status`='%s', `root`='%s', `modif`=now() WHERE `name`='%s';" 
-                            %(file['wiki'], file['ust'], file['image'], file['longname_cs'], file['longname_en'], file['short_cs'], file['short_en'], file['doc_cs'], file['doc_en'], file['status'], project_root, project_name))
+                    file['root'] = project_root
+                    file['name'] = project_name
+                    self.db_web.Modules.update({"_id": project_name}, file, upsert=True)
+                    
+                    #if modules == 0:
+                    #    print "Novy modul"
+                    #    self.db_web.Modules
+                    #    #_sql("INSERT INTO `MLAB`.`Modules` (`name`, `wiki`, `ust`, `root`, `image`, `longname_cs`, `longname_en`, `short_cs`, `short_en`, `doc_cs`, `status`, `type`) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');"
+                    #    #    %(project_name, file['wiki'], file['ust'], project_root, file['image'], file['longname_cs'], file['longname_en'], file['short_cs'], file['short_en'], file['doc_cs'], file['status'], '0'))#
+                    #
+                    #else:
+                    #    print "Existujici modul"
+                    #    _sql("UPDATE `MLAB`.`Modules` SET `wiki`='%s', `ust`='%s', `image`='%s', `longname_cs`='%s', `longname_en`='%s', `short_cs`='%s', `short_en`='%s', `doc_cs`='%s', `doc_en`='%s', `status`='%s', `root`='%s', `modif`=now() WHERE `name`='%s';" 
+                    #        %(file['wiki'], file['ust'], file['image'], file['longname_cs'], file['longname_en'], file['short_cs'], file['short_en'], file['doc_cs'], file['doc_en'], file['status'], project_root, project_name))
 
                 except Exception as e:
                     print "chyba>", e

@@ -108,6 +108,35 @@ class modules(BaseHandler):
 
 
         if category:
+            cat_pol = "$in"
+        else:
+            cat_pol = "$nin"
+
+        modules = self.db_web.Modules.aggregate([
+            {
+                "$unwind": "$_id"
+            },
+            {
+                "$match": {'category[]': {cat_pol: [category]}}
+            },
+            #{
+            #    "$match": {"$exists": "status"}
+            #},
+            {
+                "$match": {'status': {"$in": status}}
+            }
+            #"$match": {'tags.'+tag_search : {"$exists" : tag_polarity}}
+
+            #     {"category[]": {"$in": [category]}},
+            #     {"status": {"$exists":True, "$in": status }}
+        ])
+
+
+        #for mod in modules2:
+        #    print(mod)
+
+        '''
+        if category:
             modules = self.db_web.Modules.find({'category[]': [category],
                                                 "status":{"$exists":True, "$in": status }}
                                                 )#.aggregate([{ "$lookup": {
@@ -117,6 +146,9 @@ class modules(BaseHandler):
                                                  #               "as": "category[]"
                                                  #             }}
                                                  #])
+                                                          
+
+
             #if status:
             #    print "category_status"
             #    modules = self.db_web.Modules.find({'category[]': [category], "status":{"$exists":True, "$in": status }})
@@ -138,6 +170,8 @@ class modules(BaseHandler):
             #    #modules = _sql("SELECT * FROM Modules ORDER by name;")
             #    modules = self.db_web.Modules.find({"status":{"$exists":True}}) #.sort({"_id": 1})
         #print dumps(modules)
+        '''
+
         self.render("modules.hbs", parent=self, category = category, modules = modules, status = status, db_web = self.db_web)
 
 class modules_overview(BaseHandler):

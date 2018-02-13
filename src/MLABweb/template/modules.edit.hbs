@@ -100,7 +100,7 @@
             root: document.getElementById('root').value,
             wiki: document.getElementById('wiki').value,
             ust: document.getElementById('ust').value,
-            mark: document.getElementById('mark').value,
+            mark: document.getElementById('mark', 0).value,
             image: document.getElementById('image').value,
             status: document.getElementById('status').value,
             //autor: null,
@@ -269,7 +269,7 @@ var upload = function() {
 
         <div class="form-group">
           <label>Mark (hodnocení modulu 0-100, odpovídá to bodování; tzn. větší číslo větší kvalita modulu)</label>
-          <input type="number" class="form-control" min="0" max="100" step="1" value="{{module_data['mark']}}" id="mark">
+          <input type="number" class="form-control" min="0" max="100" step="1" value="{{module_data.get('mark',0)}}" id="mark">
         </div>
         
         <br>

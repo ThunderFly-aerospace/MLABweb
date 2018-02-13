@@ -25,6 +25,7 @@ class BaseHandler(tornado.web.RequestHandler):
         self.xsrf_token
        
         self.db_web = pymongo.MongoClient('localhost', 27017).MLABweb
+        self.mdb = pymongo.MongoClient('localhost', 27017)
         print(self.db_web)
 
 
@@ -44,7 +45,8 @@ class BaseHandler(tornado.web.RequestHandler):
             return None
         else:
             #return _sql("SELECT * from Users WHERE login = '%s'" %(login))[0]
-            user = self.db_web.Users.find_one({"_id": login})
+            print("_id", login)
+            user = self.mdb.Users.find_one({"_id": login})
             #print user
             print "Logen in", user['civil_name']
             return user

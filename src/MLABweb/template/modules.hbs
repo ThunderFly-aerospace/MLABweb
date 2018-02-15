@@ -100,7 +100,7 @@ a.selected{
 {% for module in modules %}
 
 <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3" >
-    <div class="card" style="height: 380pt; overflow-y: hidden;">
+    <div class="card" style="max-height: 450pt; overflow-y: hidden;">
     	<a href="/module/{{module['_id']}}/">
     	{% if not module.get('image', None)%}
     	<img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['_id']}}_Top_Big.jpg" alt="{{module['_id']}}">

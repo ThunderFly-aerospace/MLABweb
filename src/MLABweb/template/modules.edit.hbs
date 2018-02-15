@@ -8,6 +8,17 @@
 
 </style>
 
+
+<script src="/static/Croppie/croppie.min.js"></script>
+<link rel="stylesheet" href="/static/Croppie/croppie.css" />
+
+<script type="text/javascript">
+  
+var param_json = {% raw module_data.get('parameters', []) %};
+
+</script>
+
+
  <script type="text/javascript">
    var images = [{% for image in images %}
       {title: '{{image}}', value: 'http://www.mlab.cz/repos/{{image[13:]}}'},
@@ -102,9 +113,8 @@
             ust: document.getElementById('ust').value,
             mark: document.getElementById('mark', 0).value,
             image: document.getElementById('image').value,
+            image_param: [],
             status: document.getElementById('status').value,
-            //autor: null,
-            //category: null,
             longname_cs: document.getElementById('longname_cs').value,
             longname_en:  document.getElementById('longname_en').value,
             short_cs: document.getElementById('short_cs').value,
@@ -113,6 +123,7 @@
             doc_en:  window.parent.tinymce.get('doc_en').getContent(),
             category: get_array_from_select('#categories'),
             author:  get_array_from_select('#authors'),
+            parameters: JSON.stringify(param_json)
         },
         function(data, status){
 
@@ -185,92 +196,157 @@ var upload = function() {
 {% end %}
 
     <form method="post" action="">
-        <div class="form-group">
-          <label name="post-title" for="name">Název</label>
-          <input type="text" class="form-control" id="name" {% if module_data%} value = "{{module_data['name']}}" disabled="" {%end %}></input>
-        </div>
-        <div class="form-group">
-          <label name="post-title" for="root">Root</label>
-          <input type="text" class="form-control" id="root" {% if module_data%} value = "{{module_data['root']}}" disabled="" {%end %}></input>
-        </div>
-        <div class="form-group">
-          <label name="post-title" for="wiki">Wiki <small>Pokud odkaz nebude zadán, bude vygenerován automaticky.</small></label>
-          <input type="text" class="form-control" id="wiki" {% if module_data%} value = "{{module_data['wiki']}}" {%end %}></input>
-        </div>
-        <div class="form-group">
-          <label name="post-title" for="ust">UST</label>
-          <input type="text" class="form-control" id="ust" {% if module_data%} value = "{{module_data['ust']}}" {%end %}></input>
-        </div>
-        <div class="form-group">
-          <label name="post-title" for="image">Náhledy obrázků. <small>Jsou ve stejném pořadí jako je seznam pro výběr hlavního obrázku.</small></label>
-              <div>{% for image in images %}
-                        <img src="http://www.mlab.cz/repos/{{image[13:]}}" style="height: 3cm;">
-              {%end%}</div>
-          <label name="post-title" for="image">Image</label>
-              <div class="input-group">
-                <!-- <input type="text" class="form-control" id="image" {% if module_data%} value = "{{module_data['image']}}" {%end %}></input> -->
-                <select class="form-control custom-select" id="image">
-                  <option value=""> -- Vyberte obrázek -- </option>
-                        {% for image in images %}
-                        <option value='{{image[image.find("/doc"):]}}' {% if module_data['image'] == image[image.find("/doc"):] %} selected {%end%}>{{image[image.find("/doc"):]}}</option>
-                    
-                        {%end%}
-                </select>
+        <div class="row">
+          <div class="form-group col-6">
+            <label name="post-title" for="name">Název</label>
+            <input type="text" class="form-control" id="name" {% if module_data%} value = "{{module_data['name']}}" disabled="" {%end %}></input>
+          </div>
+          <div class="form-group col-6">
+            <label name="post-title" for="root">Root</label>
+            <input type="text" class="form-control" id="root" {% if module_data%} value = "{{module_data['root']}}" disabled="" {%end %}></input>
+          </div>
+          </div>
+        <div class="row">
+          <div class="form-group col-6">
+            <label name="post-title" for="wiki">Wiki <small>Pokud odkaz nebude zadán, bude vygenerován automaticky.</small></label>
+            <input type="text" class="form-control" id="wiki" {% if module_data%} value = "{{module_data['wiki']}}" {%end %}></input>
+          </div>
+          <div class="form-group col-6">
+            <label name="post-title" for="ust">UST</label>
+            <input type="text" class="form-control" id="ust" {% if module_data%} value = "{{module_data['ust']}}" {%end %}></input>
           </div>
         </div>
 
+        <div class="row">
+        <div id="image_cropper" class="col-3" style="height: 250pt; width: 250pt; margin-bottom: 35pt"></div>
+        <div class="form-group" class="col-7">
 
+          <label name="post-title" for="image">Image</label>
+          <div class="input-group">
+              <!-- <input type="text" class="form-control" id="image" {% if module_data%} value = "{{module_data['image']}}" {%end %}></input> -->
+              <select class="form-control custom-select" id="image">
+                <option value=""> -- Vyberte obrázek -- </option>
+                  {% for image in images %}
+                      <option value='{{image[image.find("/doc"):]}}' {% if module_data['image'] == image[image.find("/doc"):] %} selected {%end%}>{{image[image.find("/doc"):]}}</option>
+                  {%end%}
+              </select>
+          </div>
 
-        <div class="form-group">
-
+        <label>Upload photo - upload fotek zatim neni funkcni</label>    
         <form onsubmit="return upload();">
         <fieldset>
-          <legend>Upload photo - upload fotek zatim neni funkcni</legend>
           <input type="file" name="photo" id="photo">
           <input type="button" value="Upload" onclick="upload()">
         </fieldset>
       </form>
 
-        <div class="form-group">
-        <label name="post-title" for="status">Status</label>
-        <select class="form-control custom-select" id="status">
-          <option value="0" {% if str(module_data['status']) == "0" %} selected {% end %}>Návrh</option>
-          <option value="1" {% if str(module_data['status']) == "1" %} selected {% end %}>V přípravě</option>
-          <option value="2" {% if str(module_data['status']) == "2" %} selected {% end %}>Produkce</option>
-          <option value="3" {% if str(module_data['status']) == "3" %} selected {% end %}>Nahrazen</option>
-          <option value="4" {% if str(module_data['status']) == "4" %} selected {% end %}>Starý</option>
-        </select>
         </div>
+      </div>
+
+        <label name="post-title" for="image">Náhledy obrázků. <small>Jsou ve stejném pořadí jako je seznam pro výběr hlavního obrázku.</small></label>
+        <div>{% for image in images %}
+                  <img src="/repos/{{image[13:]}}" style="height: 3cm;">
+        {%end%}</div>
+
 
 
         <div class="form-group">
-        <label name="post-title" for="exampleSelect2">Kategorie</label>
-        <select  class="multiselect form-control" name="categories[]" multiple="multiple" id="categories">
-          {% for cat in db_web.Category.find() %}
-            <option {% if cat['_id'] in module_data.get('category[]', [])%}selected{%end%} value="{{cat['_id']}}">{{cat.get('cs', "No name")}} <small>[{{cat['path']}}{{cat['_id']}}]</small></option>
-          {% end %}
-        </select>
+
+
+        <div class="row">
+            <div class="form-group col-3">
+            <label name="post-title" for="status">Status</label>
+            <select class="form-control custom-select" id="status">
+              <option value="0" {% if str(module_data['status']) == "0" %} selected {% end %}>Návrh</option>
+              <option value="1" {% if str(module_data['status']) == "1" %} selected {% end %}>V přípravě</option>
+              <option value="2" {% if str(module_data['status']) == "2" %} selected {% end %}>Produkce</option>
+              <option value="3" {% if str(module_data['status']) == "3" %} selected {% end %}>Nahrazen</option>
+              <option value="4" {% if str(module_data['status']) == "4" %} selected {% end %}>Starý</option>
+            </select>
+            </div>
+
+
+            <div class="form-group col-3">
+            <label name="post-title" for="exampleSelect2">Kategorie</label>
+            <select  class="multiselect form-control" name="categories[]" multiple="multiple" id="categories">
+              {% for cat in db_web.Category.find() %}
+                <option {% if cat['_id'] in module_data.get('category[]', [])%}selected{%end%} value="{{cat['_id']}}">{{cat.get('cs', "No name")}} <small>[{{cat['path']}}{{cat['_id']}}]</small></option>
+              {% end %}
+            </select>
+            </div>
+
+
+            <div class="form-group col-3">
+            <label name="post-title" for="exampleSelect2">Autoři</label>
+            <select  class="multiselect form-control" name="authors[]" multiple="multiple" id="authors">
+              {% for user in db_web.Users.find() %}
+                <option {% if user['_id'] in module_data.get('author[]', [])%}selected{%end%} value="{{user['_id']}}">{{user.get('civil_name', "No civil name")}} <small>({{user['_id']}})</small></option>
+              {% end %}
+            </select>
+            </div>
+            <script type="text/javascript">
+              $(document).ready(function() {
+                  $('.multiselect').select2();
+              });
+            </script>
+
+            <div class="form-group col-3">
+              <label>Mark (hodnocení modulu 0-100, odpovídá to bodování; tzn. větší číslo větší kvalita modulu)</label>
+              <input type="number" class="form-control" min="0" max="100" step="1" value="{{module_data.get('mark',0)}}" id="mark">
+            </div>
+        </div>
+
+        <style type="">
+          .param_table .param_input_td{
+            padding: 0px;
+          }
+
+
+        </style>
+
+
+        <div class="row">
+          <div class="param_table">
+            <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Parameter name</th>
+                <th>Par. name cs</th>
+                <th>Par. name en</th>
+                <th>Hodnota</th>
+                <th>Jednotka</th>
+                <th>Popis cs</th>
+                <th>Popis en</th>
+                <th></th>
+              </tr>
+              <tr>
+                <td class="param_input_td"><input class="form-control" type="number" id="new_param_order" style="width:4em;"></td>
+                <td class="param_input_td"><!-- <input class="form-control" type="text" id="new_param_name"> -->
+                    <select class="form-control" id="new_param_name" onchange="param_change_name(this)">
+                      <option value="false">----</option>
+                      <option value="$io">Integrovaný obvod</option>
+                      <option value="$size">Rozměry</option>
+                      <option value="$voltage">Pracovní napětí</option>
+                      <option value="$op_temperature">Operační teplota</option>
+                    </select>
+                </td>
+                <td class="param_input_td"><input class="form-control" type="text" id="new_param_name_cs"></td>
+                <td class="param_input_td"><input class="form-control" type="text" id="new_param_name_en"></td>
+                <td class="param_input_td"><input class="form-control" type="text" id="new_param_value"></td>
+                <td class="param_input_td"><input class="form-control" type="text" id="new_param_unit"></td>
+                <td class="param_input_td"><input class="form-control" type="text" id="new_param_description_cs"></td>
+                <td class="param_input_td"><input class="form-control" type="text" id="new_param_description_en"></td>
+                <td class="param_input_td"><button class="form-control" onclick="param_add()"><i class="fa fa-plus" aria-hidden="true"></i></button></td>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+          </div>
         </div>
 
 
-        <div class="form-group">
-        <label name="post-title" for="exampleSelect2">Autoři</label>
-        <select  class="multiselect form-control" name="authors[]" multiple="multiple" id="authors">
-          {% for user in db_web.Users.find() %}
-            <option {% if user['_id'] in module_data.get('author[]', [])%}selected{%end%} value="{{user['_id']}}">{{user.get('civil_name', "No civil name")}} <small>({{user['_id']}})</small></option>
-          {% end %}
-        </select>
-        </div>
-        <script type="text/javascript">
-          $(document).ready(function() {
-              $('.multiselect').select2();
-          });
-        </script>
-
-        <div class="form-group">
-          <label>Mark (hodnocení modulu 0-100, odpovídá to bodování; tzn. větší číslo větší kvalita modulu)</label>
-          <input type="number" class="form-control" min="0" max="100" step="1" value="{{module_data.get('mark',0)}}" id="mark">
-        </div>
         
         <br>
         <ul class="nav nav-tabs" role="tablist">
@@ -386,10 +462,116 @@ var upload = function() {
 		$('#CompareModal').modal('toggle');
 		window.parent.tinymce.get('doc_cs').setContent(text_cs);
 		window.parent.tinymce.get('doc_en').setContent(text_en);
-		
 	}
 
 
+
+  var crop_title = $('#image_cropper').croppie({
+    viewport: {width: 200, height: 200},
+    url: '/repos{% for image in images %}{% if module_data["image"] == image[image.find("/doc"):] %}{{image[13:]}}{%end%}{%end%}',
+  });
+
+
+
+  function make_param_table(data){
+    data = param_json;
+    var param_tab = $(".param_table > table > tbody");
+    param_tab.empty();
+    console.log(data);
+
+    for (parameter in data){
+      console.log(data[parameter]);
+      param_tab.append("<tr>"+
+        "<td>" + parameter + "</td>" +
+        "<td>" + data[parameter]['name'] + "</td>"+
+        "<td>" + data[parameter]['name_cs'] + "</td>"+
+        "<td>" + data[parameter]['name_en'] + "</td>"+
+        "<td>" + data[parameter]['value'] + "</td>"+
+        "<td>" + data[parameter]['unit'] + "</td>"+
+        "<td>" + data[parameter]['description_cs'] + "</td>"+
+        "<td>" + data[parameter]['description_en'] + "</td>"+
+        "<td class='param_input_td'><div class='form-inline'>"+
+          "<button class='btn btn-primary btn-sm' style='margin: 3pt;' onclick='param_edit("+parameter+")'> <i class='fa fa-edit'></i></button>" +
+          "<button class='btn btn-danger btn-sm' style='margin: 3pt;' onclick='param_remove("+parameter+")'> <i class='fa fa-minus'></i></button>" +
+          "<button class='btn btn-success btn-sm' style='margin: 3pt;' onclick='param_up("+parameter+")' disabled> <i class='fa fa-angle-up'></i></button>" +
+          "<button class='btn btn-success btn-sm' style='margin: 3pt;' onclick='param_down("+parameter+")' disabled> <i class='fa fa-angle-down'></i></button>" +
+        "</div></td></tr>");
+    }
+  }
+
+  function param_edit(id){
+    $('#new_param_order').val(id);
+    $('#new_param_name').val(param_json[id]['name']);
+    $('#new_param_name').trigger("change");
+    $('#new_param_name_cs').val(param_json[id]['name_cs']);
+    $('#new_param_name_en').val(param_json[id]['name_en']);
+    $('#new_param_value').val(param_json[id]['value']);
+    $('#new_param_unit').val(param_json[id]['unit']);
+    $('#new_param_unit_cs').val(param_json[id]['description_cs']);
+    $('#new_param_unit_en').val(param_json[id]['description_en']);
+  }
+
+  function param_remove(id){
+    param_json.splice(id, 1);
+    make_param_table(param_json)
+  }
+
+  function param_change_name(el){
+    if (el.value == 'false'){
+      $("#new_param_name_cs").attr("disabled", false);
+      $("#new_param_name_en").attr("disabled", false);
+    }else{
+      $("#new_param_name_cs").attr("disabled", true);
+      $("#new_param_name_en").attr("disabled", true);
+
+      $("#new_param_name_cs").val(null);
+      $("#new_param_name_en").val(null);
+    }
+  }
+
+  function param_add(){
+    if ($("#new_param_order").val() == "" || $("#new_param_order").val() > param_json.length-1){
+      console.log("New place")
+      $("#new_param_order").val(param_json.push({})-1);
+    }
+    console.log($("#new_param_order").val());
+    param_json[$("#new_param_order").val()]['name'] = $('#new_param_name').val();
+    param_json[$("#new_param_order").val()]['name_cs'] = $('#new_param_name_cs').val();
+    param_json[$("#new_param_order").val()]['name_en'] = $('#new_param_name_en').val();
+    param_json[$("#new_param_order").val()]['value'] = $('#new_param_value').val();
+    param_json[$("#new_param_order").val()]['unit'] = $('#new_param_unit').val();
+    param_json[$("#new_param_order").val()]['description_cs'] = $('#new_param_description_cs').val();
+    param_json[$("#new_param_order").val()]['description_en'] = $('#new_param_description_en').val();
+
+    make_param_table();
+  }
+
+
+
+  $( document ).ready(function() {
+    param_json2 = [
+      {
+        'name':'$size',
+        'value': '23x45',
+        'unit': false,
+        'description': ""
+      },
+      {
+        'name':'$io',
+        'value': 'TLOU3453'
+      },
+      {
+        'name': '$efectivity',
+        'name_cs': 'Efektivita',
+        'name_en': "Efectivity",
+        'value': 90,
+        'unit': '$perc',
+        'description': "Ahoj, tohle je také popis"
+      }
+    ]
+
+    make_param_table(param_json);
+  });
 
 
 </script>

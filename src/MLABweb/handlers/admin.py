@@ -269,11 +269,15 @@ class module_edit(BaseHandler):
             "status": int(self.get_argument('status').strip()),
             "mark": float(self.get_argument('mark').strip()),
             "author[]": self.make_list(self.get_arguments('author[]')),
-            "category[]": self.make_list(self.get_arguments('category[]'))
+            "category[]": self.make_list(self.get_arguments('category[]')),
+            "parameters": self.get_argument('parameters', "[]")
         }})
 
         print self.get_arguments('author[]')
         print self.get_arguments('category[]')
+
+        for e in eval(self.get_argument('parameters')):
+            print(e)
 
         data_json = {}
 
@@ -409,11 +413,11 @@ class module_edit(BaseHandler):
         repo = Repo(tornado.options.options.mlab_repos)
         repo.index.add([self.get_argument('root')])
 
-        if self.current_user:
-            author = Actor(self.current_user['_id'], self.current_user['email'])
-        else:
-            author = Actor("Anonymn", "dms@mlab.cz")
-        repo.index.commit("[MLABweb] %s %s" %(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), data_json['name']), author=author, committer=author)
+        #if self.current_user:
+        #    author = Actor(self.current_user['_id'], self.current_user['email'])
+        #else:
+        #    author = Actor("Anonymn", "dms@mlab.cz")
+        #repo.index.commit("[MLABweb] %s %s" %(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), data_json['name']), author=author, committer=author)
 
 
 

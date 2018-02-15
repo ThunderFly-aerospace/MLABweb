@@ -22,10 +22,11 @@ import os
 class BaseHandler(tornado.web.RequestHandler):
 
     def prepare(self):
+
+        print("prepare ----")
         self.xsrf_token
-       
+        #self.mdb = pymongo.MongoClient('localhost', 27017)
         self.db_web = pymongo.MongoClient('localhost', 27017).MLABweb
-        self.mdb = pymongo.MongoClient('localhost', 27017)
         print(self.db_web)
 
 
@@ -46,7 +47,9 @@ class BaseHandler(tornado.web.RequestHandler):
         else:
             #return _sql("SELECT * from Users WHERE login = '%s'" %(login))[0]
             print("_id", login)
-            user = self.mdb.Users.find_one({"_id": login})
+            #self.mdb = pymongo.MongoClient('localhost', 27017)
+            #print(self.mdb)
+            user = self.db_web.Users.find_one({"_id": login})
             #print user
             print "Logen in", user['civil_name']
             return user

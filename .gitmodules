@@ -26,3 +26,6 @@
 [submodule "src/MLABweb/static/WebODF"]
 	path = src/MLABweb/static/WebODF
 	url = git@github.com:roman-dvorak/WebODF.git
+[submodule "src/MLABweb/static/Croppie"]
+	path = src/MLABweb/static/Croppie
+	url = git@github.com:Foliotek/Croppie.git

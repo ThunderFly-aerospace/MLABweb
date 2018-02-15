@@ -14,7 +14,7 @@
 
 <script type="text/javascript">
   
-var param_json = {% raw module_data.get('parameters', []) %};
+var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'") %};
 
 </script>
 
@@ -103,6 +103,9 @@ var param_json = {% raw module_data.get('parameters', []) %};
     }
 
     $(document).ready(function() {
+
+    make_param_table(param_json);
+
     $("#save").click(function(event) {
         $('#waitmodal').modal('show');
         $.post("edit",
@@ -203,7 +206,7 @@ var upload = function() {
           </div>
           <div class="form-group col-6">
             <label name="post-title" for="root">Root</label>
-            <input type="text" class="form-control" id="root" {% if module_data%} value = "{{module_data['root']}}" disabled="" {%end %}></input>
+            <input type="text" class="form-control" id="root" {% if module_data%} value = "{{module_data['root']}}" {%end %}></input>
           </div>
           </div>
         <div class="row">
@@ -251,7 +254,6 @@ var upload = function() {
 
 
         <div class="form-group">
-
 
         <div class="row">
             <div class="form-group col-3">
@@ -307,7 +309,7 @@ var upload = function() {
 
         <div class="row">
           <div class="param_table">
-            <table class="table table-bordered table-hover">
+            <table class="table table-responsive table-striped table-hover">
             <thead>
               <tr>
                 <th>#</th>
@@ -451,9 +453,9 @@ var upload = function() {
 		text_en = window.parent.tinymce.get('doc_en').getContent();
 		$('#CompareModal').modal('toggle');
 		window.parent.tinymce.get('doc_cs_new').setContent(text_cs);
-		window.parent.tinymce.get('doc_en_new').setContent(text_en);
-		
+		window.parent.tinymce.get('doc_en_new').setContent(text_en);	
 	}
+
 	function CloseCompare() {
 		var text_cs;
 		var text_en;
@@ -464,13 +466,10 @@ var upload = function() {
 		window.parent.tinymce.get('doc_en').setContent(text_en);
 	}
 
-
-
   var crop_title = $('#image_cropper').croppie({
     viewport: {width: 200, height: 200},
     url: '/repos{% for image in images %}{% if module_data["image"] == image[image.find("/doc"):] %}{{image[13:]}}{%end%}{%end%}',
   });
-
 
 
   function make_param_table(data){
@@ -545,33 +544,6 @@ var upload = function() {
 
     make_param_table();
   }
-
-
-
-  $( document ).ready(function() {
-    param_json2 = [
-      {
-        'name':'$size',
-        'value': '23x45',
-        'unit': false,
-        'description': ""
-      },
-      {
-        'name':'$io',
-        'value': 'TLOU3453'
-      },
-      {
-        'name': '$efectivity',
-        'name_cs': 'Efektivita',
-        'name_en': "Efectivity",
-        'value': 90,
-        'unit': '$perc',
-        'description': "Ahoj, tohle je také popis"
-      }
-    ]
-
-    make_param_table(param_json);
-  });
 
 
 </script>

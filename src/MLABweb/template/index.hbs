@@ -10,26 +10,16 @@
 
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <!-- <script type="text/javascript" src="/static/jquery/src/jquery.js"></script> -->
+    <script type="text/javascript" src="/static/tether/dist/js/tether.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-    <!-- <script src="static/bootstrap/dist/js/bootstrap.min.js"></script> -->
-    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/font-awesome-4.7.0/css/font-awesome.min.css">
 
     <script type="text/javascript" src="/static/unveil/jquery.unveil.js"></script>
     <script type="text/javascript" src="/static/WOW/dist/wow.js"></script>
-
-
-    <!-- script src='/static/tinymce-dist/tinymce.min.js'></script>
-    <script src="/static/lightbox/dist/ekko-lightbox.js"></script>
-    <link rel="stylesheet" href="/static/lightbox/dist/ekko-lightbox.css" />
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script> -->
-
 
     <script type="text/javascript">
       $(document).ready(function() {
@@ -242,10 +232,12 @@
           <div style="padding: 10pt;" class="col-sm-6 col-md-4 col-lg-4 col-xl-3 col-12"><div class="card module-card">
 
             <a href="/module/{{module['name']}}/">
-              {% if not module['image']%}
-              <img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['name']}}_Top_Big.jpg" alt="{{module['name']}}">
+              {% if module.get('image_small', False) %}
+                <img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/{{module['image_small']}}" alt="{{module['name']}}">
+              {% elif module['image']%}
+                <img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/{{module['image']}}" alt="{{module['name']}}">
               {% else %}
-              <img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/{{module['image']}}" alt="{{module['name']}}">
+                <img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['name']}}_Top_Big.jpg" alt="{{module['name']}}">
               {% end %}
             </a>
 

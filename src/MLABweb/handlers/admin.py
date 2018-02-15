@@ -20,6 +20,8 @@ from tornado import gen
 import git
 from git import Repo, Actor
 import os
+from PIL import Image
+import qrcode
 
 import re
 from six.moves.html_parser import HTMLParser
@@ -41,13 +43,8 @@ class home(BaseHandler):
     @asynchronous
     def get(self, data=None):
         print "HomePage"
-        #print tornado.options.options.as_dict()
-        #print tornado.options.OptionParser().as_dict()
-        #module_data = _sql("SELECT * FROM MLAB.Modules WHERE status='2' ORDER by modif DESC")
-        #module_data = _sql("SELECT * FROM `MLAB`.`Modules` WHERE status='2' AND `image` NOT LIKE '%QRcode%' AND CHARACTER_LENGTH(`longname_cs`) > 20 AND `mark` > 45 ORDER BY 'modif' DESC;")
-        #print(module_data)
-        module_data = self.db_web.Modules.find({ "$and": [ {"$or":[{'status': 2}, {'status':'2'}]}, {'mark': {"$gte": 45}}, {"$where": "this.longname_cs.length > 20"}, {'image':{"$not":re.compile("QRcode")}}]})
-        #print(module_data)
+       
+        module_data = self.db_web.Modules.find({ "$and": [ {"$or":[{'status': 2}, {'status':'2'}]}, {'mark': {"$gte": 45}}, {"$where": "this.longname_cs.length > 20"}, {"$where": "this.image.length > 4"}, {'image':{"$not":re.compile("QRcode")}}]})
         self.render("index.hbs", parent=self, modules = module_data)
 
 class module_detail(BaseHandler):
@@ -59,7 +56,9 @@ class module_detail(BaseHandler):
         module_data = self.db_web.Modules.find({"_id": module})[0]
         #print type(module_data)
         #print module_data
-        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*")
+        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*.jpg")
+        images.extend(glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*.png"))
+
         #print images
         self.render("modules.detail.hbs", db_web = self.db_web, module=module, module_data=module_data, images = images, documents = glob2.glob(tornado.options.options.mlab_repos+module_data['root']+"//**/*.pdf"))
 
@@ -180,9 +179,7 @@ class modules_overview(BaseHandler):
     def get(self):
         print "modules overview"
         order = self.get_argument('order', '_id')
-        #modules = _sql("SELECT * FROM Modules ORDER BY %s" %order)
         modules = self.db_web.Modules.find().sort([(order, 1)])
-        #modules = _sql("SELECT  Modules.*,  GROUP_CONCAT(Users.name SEPARATOR ',') module_to_user FROM MLAB.Modules RIGHT JOIN module_to_user ON module_to_user.module = Modules.id INNER JOIN Users ON module_to_user.user = Users.id GROUP BY module_to_user.module ORDER BY Module.id;")
         self.render("modules.overview.hbs", parent=self, modules = modules)
 
 class moduleImageUpload(tornado.web.RequestHandler):
@@ -204,34 +201,12 @@ class module_edit(BaseHandler):
     @tornado.web.authenticated
     #@asynchronous
     def get(self, module=None):
-        module_data = self.db_web.Modules.find({"_id": module})
-        if module_data.count() > 0:
-            module_data = module_data[0]
-        else:
-            module_data = None
+        module_data = self.db_web.Modules.find_one({"_id": module})
+        #if module_data.count() > 0:
+        #    module_data = module_data[0]
+        #else:
+        #    module_data = None
 
-        #try:
-        #    en = open(tornado.options.options.mlab_repos+module_data['root']+'/README.md').read()
-
-        #    module_data['longname_en']  = re.findall('\<!--- subtitle ---\>(.*)\<!--- Esubtitle ---\>', en)[0]
-        #    module_data['short_en']  = re.findall('\<!--- description ---\>(.*)\<!--- Edescription ---\>', en)[0]
-        #    print "pouzivam readme #EN"
-        #except Exception as e:
-        #    print "readmeErrEN", e
-
-        #print "traying to open"
-        #try:
-        #    print module_data['root']
-        #    cs = open(tornado.options.options.mlab_repos+module_data['root']+'/README.cs.md').read()
-        #    #print cs
-        #    #print "!!!!!!!!!!!!!!!!!11"
-        #    module_data['longname_cs']  = re.findall('\<!--- subtitle ---\>(.*)\<!--- Esubtitle ---\>', cs)[0]
-        #    module_data['short_cs']  = re.findall('\<!--- description ---\>(.*)\<!--- Edescription ---\>', cs)[0]
-        #    print "pouzivam readme #CS"
-        #except Exception as e:
-        #    print "readmeErrCS", e
-
-        #print module_data
         self.render("modules.edit.hbs",  parent=self, module_data=module_data, images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*"), db_web = self.db_web)
     
     def make_list(self, input):
@@ -241,22 +216,16 @@ class module_edit(BaseHandler):
     @tornado.web.authenticated
     def post(self, module=None):
         print "POST: module_edit"
-        print self.request
-        data = self.request.arguments
-
-
-        print data
-        #print "##################################################33"
         module = self.get_argument('name').strip()
-        
-        #dotaz = "UPDATE `MLAB`.`Modules` SET `wiki`='%s', `ust`='%s', `longname_cs`='%s', `longname_en`='%s', `short_cs`='%s', `short_en`='%s', `doc_cs`='%s', `doc_en`='%s', image = '%s', status = '%s', mark = '%s' WHERE `name`='%s';"  
-        #%(self.get_argument('wiki').strip(), self.get_argument('ust').strip(),
-        #    self.get_argument('longname_cs'), self.get_argument('longname_en'), self.get_argument('short_cs'), self.get_argument('short_en'),
-        #    self.get_argument('doc_cs'), self.get_argument('doc_en'), self.get_argument('image').strip(), self.get_argument('status').strip(),
-        #    self.get_argument('mark').strip(), self.get_argument('name').strip())
-        #_sql(dotaz) 
+        print("Modul", module)
+
+        image_path = self.get_argument('image', '').strip()
+        if image_path == '':
+            image_path = "/doc/img/"+module+"_QRcode.jpg"
+        image_small = (os.path.splitext(self.get_argument('image'))[0]+'.jpgs').strip()
 
         self.db_web.Modules.update_one({"_id": self.get_argument('name').strip()},{ "$set":{
+            "root": self.get_argument('root').strip(),
             "wiki": self.get_argument('wiki').strip(),
             "ust": self.get_argument('ust').strip(),
             "longname_cs": self.get_argument('longname_cs'),
@@ -265,44 +234,47 @@ class module_edit(BaseHandler):
             "short_en": self.get_argument('short_en'),
             "doc_cs": self.get_argument('doc_cs'),
             "doc_en": self.get_argument('doc_en'),
-            "image": self.get_argument('image').strip(),
+            "image": image_path,
+            "image_small": image_small,
             "status": int(self.get_argument('status').strip()),
             "mark": float(self.get_argument('mark').strip()),
             "author[]": self.make_list(self.get_arguments('author[]')),
             "category[]": self.make_list(self.get_arguments('category[]')),
-            "parameters": self.get_argument('parameters', "[]")
+            "parameters": eval(self.get_argument('parameters', "[]"))
         }})
 
-        print self.get_arguments('author[]')
-        print self.get_arguments('category[]')
+        # ulozeni json soboru ze zmenenych dat
+        # nacteni dat z DB
+        db_data = self.db_web.Modules.find_one({"_id": self.get_argument('name').strip()})
+        module_json_path = tornado.options.options.mlab_repos+db_data['root']+'/' + module + '.json'
+        module_qr_path = tornado.options.options.mlab_repos+db_data['root']+'/doc/img/' + module + '_QRcode.png'
 
-        for e in eval(self.get_argument('parameters')):
-            print(e)
+        # ulozeni dat do json souboru
+        file_content = json.dumps(db_data, indent=4, ensure_ascii=False).encode('utf8')
+        with open(module_json_path, "w") as text_file:
+            text_file.write(file_content)
 
-        data_json = {}
+        # vytvoreni slozky /doc/img, pokud jeste neexistuje
+        try: os.makedirs(tornado.options.options.mlab_repos+db_data['root'] + '/doc/img')
+        except Exception as e: pass
+
+        # pokud neexistuje QR, tak ho vytvorit
+        if not os.path.isfile(module_qr_path):
+            try:
+                print("QR neexistuje, asi by jsi ho mel vytvorit")
+                qr = qrcode.QRCode( version=4, error_correction=qrcode.constants.ERROR_CORRECT_Q, box_size=15, border=4)
+                qr.add_data('https://www.mlab.cz/PermaLink/'+module)
+                qr.make(fit=True)
+                qr.make_image().save(module_qr_path)
+            except Exception as e: pass
+
+        try:
+            im = Image.open(tornado.options.options.mlab_repos+self.get_argument('root')+self.get_argument('image'))
+            im.thumbnail((512,512), Image.ANTIALIAS)
+            im.save(tornado.options.options.mlab_repos+self.get_argument('root')+image_small, 'JPEG', quality=65)
+        except Exception as e: pass
 
 
-        for element in data:
-            data_json[element] = data[element][0]
-
-
-        data_json['category[]'] = self.make_list(data.get('category[]', []))
-        data_json['author[]'] = self.make_list(data.get('author[]', []))
-
-        with open(tornado.options.options.mlab_repos+data_json['root']+'/' + module + '.json', 'w') as out:
-            json.dump(data_json, out, indent=4)
-
-        '''
-        if '.jpg' in data_json['image'] or '.JPG' in data_json['image']:
-            #cmd = 'convert /home/roman/repos/Modules/'+data_json['root']+'/'+data_json['image'] +' -sampling-factor 4:2:0 -strip -quality 80 -interlace JPEG -colorspace RGB /home/roman/repos/Modules/'+ data_json['root'] +'/DOC/SRC/img/'+ module +'_title.jpg'
-            #print cmd
-            #process = subprocess.Popen(cmd)
-            process = subprocess.Popen(["convert", "/home/roman/repos/Modules/%s/%s" %(data_json['root'], data_json['image']),"-sampling-factor","4:2:0","-strip","-quality","80","-interlace","JPEG","-colorspace","RGB","/home/roman/repos/Modules/%s/DOC/SRC/img/%s_title.jpg" %(data_json['root'], module)])
-            process.wait()
-            data_json['image'] = tornado.options.options.mlab_repos+ data_json['root'] +'/DOC/SRC/img/'+ module +'_title.jpg'
-
-            dotaz = "UPDATE `MLAB`.`Modules` SET image = '%s' WHERE `name`='%s';"  %(data_json['image'], module)
-            _sql(dotaz) 
         '''
 
         text_file = open(tornado.options.options.mlab_repos+self.get_argument('root')+'/README.md', "w")
@@ -403,21 +375,21 @@ class module_edit(BaseHandler):
         #text_file = open(tornado.options.options.mlab_repos+data['root'][0]+'/DOC/SRC/module.en.html', "w")
         #text_file.write(html)
         #text_file.close()
+        '''
 
 
         #process = subprocess.Popen(["pandoc", "-s", tornado.options.options.mlab_repos+data['root'][0]+'/DOC/SRC/module.cs.html', "-o", tornado.options.options.mlab_repos+data['root'][0]+'/DOC/'+data_json['name']+'.cs.pdf', "--template=/home/roman/repos/test-mlab-ui/src/MLABweb/template/doc.en.latex"])
         #process = subprocess.Popen(["pandoc", "-s", tornado.options.options.mlab_repos+data['root'][0]+'/DOC/SRC/module.en.html', "-o", tornado.options.options.mlab_repos+data['root'][0]+'/DOC/'+data_json['name']+'.en.pdf', "--template=/home/roman/repos/test-mlab-ui/src/MLABweb/template/doc.en.latex"])
         
 
-
         repo = Repo(tornado.options.options.mlab_repos)
         repo.index.add([self.get_argument('root')])
-
-        #if self.current_user:
-        #    author = Actor(self.current_user['_id'], self.current_user['email'])
-        #else:
-        #    author = Actor("Anonymn", "dms@mlab.cz")
-        #repo.index.commit("[MLABweb] %s %s" %(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), data_json['name']), author=author, committer=author)
+        
+        if self.current_user:
+            author = Actor(self.current_user['_id'], self.current_user['email'])
+        else:
+            author = Actor("Anonymn", "dms@mlab.cz")
+        repo.index.commit("[MLABweb] %s %s" %(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), db_data['name']), author=author, committer=author)
 
 
 

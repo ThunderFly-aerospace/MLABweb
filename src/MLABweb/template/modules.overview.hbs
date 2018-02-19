@@ -25,9 +25,10 @@
 		<th>Složka</th>
 		<th>Kategorie</th>
 		<th>Autor</th>
-		<th>Obrázek</th>
+		<th>Obr</th>
 		<th>wiki</th>
 		<th>ust</th>
+		<th>Para</th>
 		<th>cs jmeno</th>
 		<th>cs perex</th>
 		<th>cs doc</th>
@@ -54,10 +55,10 @@
 				<td>{% for el in module.get('category[]', []) %} {{el}} {%end%}</td>
 				<td>{% for el in module.get('author[]', []) %} {{el}} {%end%}</td>
 				<td  data-toggle="tooltip" data-placement="top" title="{{module['image']}}">{% if module['image'] and 'QRcode' in module['image']%}<i class="fa fa-qrcode" aria-hidden="true"></i>{% elif module['image'] and len(module['image']) > 10 %}<a href="/repos/{{module['root']}}/{{module['image']}}"><i class="fa fa-check" aria-hidden="true"></i></a> {% else %}<i class="fa fa-times" aria-hidden="true"></i>  {{module['image']}}{%end%}</td>
-
 				<td  data-toggle="tooltip" data-placement="top" title="{{module['wiki']}}">{% if module['wiki'] and len(module['wiki']) > 10 %}<a href="{{module['wiki']}}"><i class="fa fa-check" aria-hidden="true"></i></a> {% else %}<i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
 
 				<td  data-toggle="tooltip" data-placement="top" title="{{module['ust']}}"> {% if module['ust'] and len(module['ust']) > 10 %}<a href="{{module['ust']}}"><i class="fa fa-check" aria-hidden="true"></i></a> {% else %}<i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
+				<td>{{len(module.get('parameters', []))}}</td>
 				{% if module['longname_cs']%}<td>{{len(module['longname_cs'])}}{%else%}<td><i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
 				{% if module['short_cs']   %}<td>{{len(module['short_cs'])}}{% else %}<td><i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>
 				{% if module['doc_cs']     %}<td>{{len(module['doc_cs'])}}{% else %}<td><i class="fa fa-times" aria-hidden="true"></i>{%end%}</td>

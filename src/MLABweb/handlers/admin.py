@@ -129,49 +129,37 @@ class modules(BaseHandler):
             #     {"category[]": {"$in": [category]}},
             #     {"status": {"$exists":True, "$in": status }}
         ])
-
-
-        #for mod in modules2:
-        #    print(mod)
-
-        '''
-        if category:
-            modules = self.db_web.Modules.find({'category[]': [category],
-                                                "status":{"$exists":True, "$in": status }}
-                                                )#.aggregate([{ "$lookup": {
-                                                 #               "from": "Category",
-                                                 #               "foreignField": "_id",
-                                                 #               "localField": "category[]",
-                                                 #               "as": "category[]"
-                                                 #             }}
-                                                 #])
-                                                          
-
-
-            #if status:
-            #    print "category_status"
-            #    modules = self.db_web.Modules.find({'category[]': [category], "status":{"$exists":True, "$in": status }})
-            #    #modules = _sql("SELECT * FROM `MLAB`.`module_to_category` INNER JOIN MLAB.Modules ON Modules.id = module_to_category.module WHERE `category` = (SELECT id from `MLAB`.`Categories` WHERE `Categories`.`name` = '%s' AND status IN (%s) ORDER by name);" %(category, status))
-            #else:
-            #    modules = self.db_web.Modules.find({'category[]': [category]})
-            #    print "category_only",
-            #    #modules = _sql("SELECT * FROM `MLAB`.`module_to_category` INNER JOIN MLAB.Modules ON Modules.id = module_to_category.module WHERE `category` = (SELECT id from `MLAB`.`Categories` WHERE `Categories`.`name` = '%s' ORDER by name);" %(category))
-            #    #modules = self.Modules.find()
-            #modules = []
-        else:
-            modules = self.db_web.Modules.find({"status":{"$exists":True, "$in": status }}) #.sort({"_id": 1})
-            #if status:
-            #    print "+++++STATUS"
-            #    print status, type(status)
-            #    #modules = _sql("SELECT * FROM Modules WHERE status IN (%s) ORDER by name;" %(status))
-            #    modules = self.db_web.Modules.find({"status":{"$in": status }}) #.sort({"_id": 1})
-            #else:
-            #    #modules = _sql("SELECT * FROM Modules ORDER by name;")
-            #    modules = self.db_web.Modules.find({"status":{"$exists":True}}) #.sort({"_id": 1})
-        #print dumps(modules)
-        '''
-
         self.render("modules.hbs", parent=self, category = category, modules = modules, status = status, db_web = self.db_web)
+
+
+    def post(self, category = None):
+        print(self.request.arguments)
+        print("Modules - POST")
+        print("cat:", category)
+        search = self.get_argument('search', '');
+        print("search:", search)
+        modules = self.db_web.Modules.aggregate([
+            {
+                "$unwind": "$_id"
+            },
+            {
+                "$match": {"$or": [
+                    {
+                        "name": { "$regex": search, "$options": 'i'}
+                    },
+                    {
+                        'short_cs': { "$regex": search, "$options": 'i'}
+                    },
+                    {
+                        'short_en': { "$regex": search, "$options": 'i'}
+                    }
+                ]
+            }
+            }
+
+        ])
+
+        self.write(dumps(modules))
 
 class modules_overview(BaseHandler):
     @asynchronous

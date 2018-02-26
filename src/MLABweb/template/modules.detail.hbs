@@ -74,6 +74,7 @@
     <div class="card"  style="border-color: #fff;">
   
       <div class="card-block card-gallery">
+        {% if len(module_data.get('parameters', [])) > 0 %}
         <table style="width: 100%;" class="table-responsive table-condensed table-bordered table-hover">
           <thead>
             <th>Parametr</th>
@@ -89,6 +90,7 @@
         {% end %}
         </tbody><tfoot><tr></tr></tfoot>
         </table><br>
+        {% end %}
         {# {{images}} #}
           <div class="">
           {% for image in images %}

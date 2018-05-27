@@ -110,6 +110,7 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
         $('#waitmodal').modal('show');
         $.post("edit",
         {
+            commit_msg: document.getElementById('commit_msg').value,
             name: document.getElementById('name').value,
             root: document.getElementById('root').value,
             wiki: document.getElementById('wiki').value,
@@ -129,9 +130,12 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
             parameters: JSON.stringify(param_json)
         },
         function(data, status){
-
             $('#waitmodal').modal('hide');
             alert("Data: " + data + "\nStatus: " + status+'\n Dokončeno');
+            {% if new %}
+              window.location.href = "/module/"+document.getElementById('name').value+"/edit";
+            {% end %}
+
         });
     });
     });
@@ -195,28 +199,28 @@ var upload = function() {
 {%if not module_data %}
 <h2>Nový modul</h2>
 {% else %}
-<h2>Úprava existujícího modulu: <i> {{module_data['name']}} </i></h2>
+<h2>Úprava existujícího modulu: <i> {% if not new %} {{module_data['name']}} {% else %} Nový modul {% end %}</i></h2>
 {% end %}
 
     <form method="post" action="">
         <div class="row">
           <div class="form-group col-6">
             <label name="post-title" for="name">Název</label>
-            <input type="text" class="form-control" id="name" {% if module_data%} value = "{{module_data['name']}}" disabled="" {%end %}></input>
+            <input type="text" class="form-control" id="name" {% if not new%} value = "{{module_data['name']}}" disabled="" {%end %}></input>
           </div>
           <div class="form-group col-6">
-            <label name="post-title" for="root">Root</label>
-            <input type="text" class="form-control" id="root" {% if module_data%} value = "{{module_data['root']}}" {%end %}></input>
+            <label name="post-title" for="root">Root (relative path from repo root to module root)</label>
+            <input type="text" class="form-control" id="root" {% if not new%} value = "{{module_data['root']}}" {%end %}></input>
           </div>
           </div>
         <div class="row">
           <div class="form-group col-6">
             <label name="post-title" for="wiki">Wiki <small>Pokud odkaz nebude zadán, bude vygenerován automaticky.</small></label>
-            <input type="text" class="form-control" id="wiki" {% if module_data%} value = "{{module_data['wiki']}}" {%end %}></input>
+            <input type="text" class="form-control" id="wiki" {% if not new%} value = "{{module_data['wiki']}}" {%end %}></input>
           </div>
           <div class="form-group col-6">
             <label name="post-title" for="ust">UST</label>
-            <input type="text" class="form-control" id="ust" {% if module_data%} value = "{{module_data['ust']}}" {%end %}></input>
+            <input type="text" class="form-control" id="ust" {% if not new%} value = "{{module_data['ust']}}" {%end %}></input>
           </div>
         </div>
 
@@ -226,11 +230,10 @@ var upload = function() {
 
           <label name="post-title" for="image">Image</label>
           <div class="input-group">
-              <!-- <input type="text" class="form-control" id="image" {% if module_data%} value = "{{module_data['image']}}" {%end %}></input> -->
               <select class="form-control custom-select" id="image">
                 <option value=""> -- Vyberte obrázek -- </option>
                   {% for image in images %}
-                      <option value='{{image[image.find("/doc"):]}}' {% if module_data['image'] == image[image.find("/doc"):] %} selected {%end%}>{{image[image.find("/doc"):]}}</option>
+                      <option value='{{image[image.find("/doc"):]}}' {% if module_data.get('image', '') == image[image.find("/doc"):] %} selected {%end%}>{{image[image.find("/doc"):]}}</option>
                   {%end%}
               </select>
           </div>
@@ -259,11 +262,11 @@ var upload = function() {
             <div class="form-group col-3">
             <label name="post-title" for="status">Status</label>
             <select class="form-control custom-select" id="status">
-              <option value="0" {% if str(module_data['status']) == "0" %} selected {% end %}>Návrh</option>
-              <option value="1" {% if str(module_data['status']) == "1" %} selected {% end %}>V přípravě</option>
-              <option value="2" {% if str(module_data['status']) == "2" %} selected {% end %}>Produkce</option>
-              <option value="3" {% if str(module_data['status']) == "3" %} selected {% end %}>Nahrazen</option>
-              <option value="4" {% if str(module_data['status']) == "4" %} selected {% end %}>Starý</option>
+              <option value="0" {% if     new or  str(module_data['status']) == "0" %} selected {% end %}>Návrh</option>
+              <option value="1" {% if not new and str(module_data['status']) == "1" %} selected {% end %}>V přípravě</option>
+              <option value="2" {% if not new and str(module_data['status']) == "2" %} selected {% end %}>Produkce</option>
+              <option value="3" {% if not new and str(module_data['status']) == "3" %} selected {% end %}>Nahrazen</option>
+              <option value="4" {% if not new and str(module_data['status']) == "4" %} selected {% end %}>Starý</option>
             </select>
             </div>
 
@@ -369,16 +372,16 @@ var upload = function() {
               <h2>Česky</h2>
                 <div class="form-group">
                   <label name="post-title" for="post-title">Dlouhý název</label>
-                  <input type="text" class="form-control" id="longname_cs" {% if module_data%} value = "{{module_data['longname_cs']}}" {%end %}></input>
+                  <input type="text" class="form-control" id="longname_cs" {% if not new%} value = "{{module_data['longname_cs']}}" {%end %}></input>
                 </div>
                 <div class="form-group">
                   <label name="post-title" for="post-title">Krátký popis</label>
-                  <input type="text" class="form-control" id="short_cs" rows="5" {% if module_data%} value = "{{module_data['short_cs']}}" {%end %}></input>
+                  <input type="text" class="form-control" id="short_cs" rows="5" {% if not new%} value = "{{module_data['short_cs']}}" {%end %}></input>
                 </div>
                 <div class="form-group">
                   <label name="post-title" for="post-title">Detailní popis</label><br>
                 	<div id="placer_cs">
-                  	<textarea id="doc_cs" class="form-control">{% if module_data%} {{module_data['doc_cs']}} {%end %}</textarea>
+                  	<textarea id="doc_cs" class="form-control">{% if not new%} {{module_data['doc_cs']}} {%end %}</textarea>
                   	</div>
                 </div>
             </div>
@@ -386,22 +389,26 @@ var upload = function() {
               <h2>English</h2>
                <div class="form-group">
                   <label name="post-title" for="post-title">Dlouhý název</label>
-                  <input type="text" class="form-control" id="longname_en" {% if module_data %} value = "{{module_data['longname_en']}}" {%end %}></input>
+                  <input type="text" class="form-control" id="longname_en" {% if not new %} value = "{{module_data['longname_en']}}" {%end %}></input>
               </div>
                 <div class="form-group">
                   <label name="post-title" for="post-title">Krátký popis</label>
-                  <input type="text" class="form-control" id="short_en" rows="5" {% if module_data %} value = "{{module_data['short_en']}}" {%end %}></input>
+                  <input type="text" class="form-control" id="short_en" rows="5" {% if not new %} value = "{{module_data['short_en']}}" {%end %}></input>
                 </div>
                 <div class="form-group">
                   <label name="post-title" for="post-title">Detailní popis</label><br>
                 	<div id="placer_en">
-                  	<textarea id="doc_en" class="form-control">{% if module_data%} {{module_data['doc_en']}} {%end %}</textarea>
+                  	<textarea id="doc_en" class="form-control">{% if not new%} {{module_data['doc_en']}} {%end %}</textarea>
                   	</div>
                 </div>
             </div>
         </div>
+        <div>
+          <label>Commit message</label>
+          <input type="text" id="commit_msg" name="" value="Documentaion edits">
+        </div>
         <input type="button" value="Uložit" id="save"  class="btn btn-primary">
-        {% if module_data%}
+        {% if not new %}
         <input type="button" value="Zpět na {{module_data['name']}}" onclick="javascript:location.href='/module/{{module_data['name']}}/'"  class="btn btn-secondary">
         {% else %}
         <input type="button" value="Zpět na seznam modulů" onclick="javascript:location.href='/modules'"  class="btn btn-secondary">
@@ -429,12 +436,12 @@ var upload = function() {
 	      <div class="row">
 	      	<div class="col">
 	      		<div id="new_placer_cs">
-	          		<textarea id="doc_cs_new" class="form-control">{% if module_data%} {{module_data['doc_en']}} {%end %}</textarea>
+	          		<textarea id="doc_cs_new" class="form-control">{% if not new%} {{module_data['doc_en']}} {%end %}</textarea>
 	      		</div>
 	      	</div>
 	      	<div class="col">
 	      		<div id="new_placer_en">
-	          		<textarea id="doc_en_new" class="form-control">{% if module_data%} {{module_data['doc_en']}} {%end %}</textarea>
+	          		<textarea id="doc_en_new" class="form-control">{% if not new%} {{module_data['doc_en']}} {%end %}</textarea>
 	      		</div>
 	      	</div>
 	      </div>
@@ -468,7 +475,7 @@ var upload = function() {
 
   var crop_title = $('#image_cropper').croppie({
     viewport: {width: 200, height: 200},
-    url: '/repos{% for image in images %}{% if module_data["image"] == image[image.find("/doc"):] %}{{image[13:]}}{%end%}{%end%}',
+    url: '/repos{% for image in images %}{% if module_data.get("image", '') == image[image.find("/doc"):] %}{{image[13:]}}{%end%}{%end%}',
   });
 
 

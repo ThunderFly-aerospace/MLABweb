@@ -46,7 +46,6 @@ class O_login(BaseHandler):
 class O_github(BaseHandler):
 
     def get(self):
-        print "GitHub"
         github_code = self.get_argument('code', None)
         github = OAuth2Session("ed66f4255ebebd63b335", scope = ["user:email"])
         token = github.fetch_token('https://github.com/login/oauth/access_token', code = github_code, client_secret='44eebca3bf45fa8357731d1c87ceaeb840922a61')
@@ -74,9 +73,8 @@ class O_github(BaseHandler):
         utcnow = datetime.datetime.utcnow().isoformat()
 
         if user_db == 1: # uzivatel je zpet :)
-            print "Uzivatel je zpet :)"
+            print("Uzivatel je zpet :)")
             self.db_web.Users.update_one({"_id": user_j['login']},{ "$set": {"email": email, "last_login": datetime.datetime.utcnow()}})
-            print "redir /"
             self.redirect("/")
 
         elif user_db == 0: # Novy uzivatel

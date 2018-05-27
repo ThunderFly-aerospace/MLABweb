@@ -26,6 +26,7 @@ tornado.options.define("debug", default=False, help="debug mode")
 tornado.options.define("mysql_user", default=None, help="mysql user")
 tornado.options.define("mysql_pass", default=None, help="mysql pass")
 tornado.options.define("mlab_repos", default=None, help="Where is MLAB repository stored")
+tornado.options.define("mlabgen", default=None, help="Where is mlabgen repository stored")
 
 
 class all(BaseHandler):
@@ -48,6 +49,10 @@ class WebApp(tornado.web.Application):
 
         handlers =[
             (r'/', admin.home),
+            (r'/module/', admin.modules),
+            (r'/module', admin.modules),
+            (r'/module/new', admin.module_edit),
+            (r'/module/edit', admin.module_edit),
             (r'/module/(.*)/edit/', admin.module_edit),
             (r'/module/(.*)/edit', admin.module_edit),
             (r'/module/(.*)/edit/upload_image/', admin.moduleImageUpload),
@@ -55,13 +60,9 @@ class WebApp(tornado.web.Application):
             (r'/module/(.*)/compare', admin.module_comapare),
             (r'/module/(.*)/', admin.module_detail),
             (r'/module/(.*)', admin.module_detail),
-            (r'/module/', admin.modules),
-            (r'/module', admin.modules),
             (r'/modules/all', admin.modules_overview),
 
             (r'/admin/', admin.home),
-            (r'/module', admin.modules),
-            (r'/module/', admin.modules),
             (r'/modules', admin.modules),
             (r'/modules/', admin.modules),
             (r'/modules/(.*)/', admin.modules),

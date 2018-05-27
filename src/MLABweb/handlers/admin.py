@@ -7,6 +7,7 @@ from bson.json_util import dumps
 
 import glob
 import glob2
+import shutil
 import time
 #from tornado import web
 from tornado import ioloop
@@ -189,13 +190,19 @@ class module_edit(BaseHandler):
     @tornado.web.authenticated
     #@asynchronous
     def get(self, module=None):
-        module_data = self.db_web.Modules.find_one({"_id": module})
-        #if module_data.count() > 0:
-        #    module_data = module_data[0]
-        #else:
-        #    module_data = None
+        if module:
+            new = False
+            module_data = self.db_web.Modules.find_one({"_id": module})
+            images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*")
+        else:
+            new = True
+            module_data = {
+                'status': 1,
+            }
+            images = []
 
-        self.render("modules.edit.hbs",  parent=self, module_data=module_data, images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*"), db_web = self.db_web)
+
+        self.render("modules.edit.hbs", parent=self, module_data=module_data, images = images, db_web = self.db_web, all = True, new = new)
     
     def make_list(self, input):
         if isinstance(input, list): return input
@@ -203,33 +210,53 @@ class module_edit(BaseHandler):
 
     @tornado.web.authenticated
     def post(self, module=None):
-        print "POST: module_edit"
+        modules_root = tornado.options.options.mlab_repos
+
+        print("POST: module_edit")
         module = self.get_argument('name').strip()
         print("Modul", module)
+
+        if not os.path.isfile(os.path.join(modules_root, self.get_argument('root', ''), module+'.json')):
+            print("Slozka pro tento modul - vytvarim ji")
+            shutil.copytree(tornado.options.options.mlabgen+'module', tornado.options.options.mlab_repos+self.get_argument('root'))
+            for root, dirs, files in os.walk(tornado.options.options.mlab_repos+self.get_argument('root') , topdown=False):
+                for file in files:
+                    if 'module' in file:
+                        print(root, file)
+                        if not any(s in file for s in ['kicad_wks']):
+                            shutil.move(root+"/"+file, root+"/"+file.replace('module', self.get_argument('name')))
 
         image_path = self.get_argument('image', '').strip()
         if image_path == '':
             image_path = "/doc/img/"+module+"_QRcode.jpg"
         image_small = (os.path.splitext(self.get_argument('image'))[0]+'.jpgs').strip()
 
-        self.db_web.Modules.update_one({"_id": self.get_argument('name').strip()},{ "$set":{
-            "root": self.get_argument('root').strip(),
-            "wiki": self.get_argument('wiki').strip(),
-            "ust": self.get_argument('ust').strip(),
-            "longname_cs": self.get_argument('longname_cs'),
-            "longname_en": self.get_argument('longname_en'),
-            "short_cs": self.get_argument('short_cs'),
-            "short_en": self.get_argument('short_en'),
-            "doc_cs": self.get_argument('doc_cs'),
-            "doc_en": self.get_argument('doc_en'),
-            "image": image_path,
-            "image_small": image_small,
-            "status": int(self.get_argument('status').strip()),
-            "mark": float(self.get_argument('mark').strip()),
-            "author[]": self.make_list(self.get_arguments('author[]')),
-            "category[]": self.make_list(self.get_arguments('category[]')),
-            "parameters": eval(self.get_argument('parameters', "[]"))
-        }})
+        print(self.request.arguments)
+
+        self.db_web.Modules.update_one(
+            {"_id": self.get_argument('name').strip()},
+
+            { "$set":{
+                "name": self.get_argument('name').strip(),
+                "root": self.get_argument('root').strip(),
+                "wiki": self.get_argument('wiki').strip(),
+                "ust": self.get_argument('ust').strip(),
+                "longname_cs": self.get_argument('longname_cs'),
+                "longname_en": self.get_argument('longname_en'),
+                "short_cs": self.get_argument('short_cs'),
+                "short_en": self.get_argument('short_en'),
+                "doc_cs": self.get_argument('doc_cs'),
+                "doc_en": self.get_argument('doc_en'),
+                "image": image_path,
+                "image_small": image_small,
+                "status": int(self.get_argument('status').strip()),
+                "mark": float(self.get_argument('mark').strip()),
+                "author[]": self.make_list(self.get_arguments('author[]')),
+                "category[]": self.make_list(self.get_arguments('category[]')),
+                "parameters": eval(self.get_argument('parameters', "[]"))
+            }},
+            upsert = True
+        )
 
         # ulozeni json soboru ze zmenenych dat
         # nacteni dat z DB
@@ -377,7 +404,7 @@ class module_edit(BaseHandler):
             author = Actor(self.current_user['_id'], self.current_user['email'])
         else:
             author = Actor("Anonymn", "dms@mlab.cz")
-        repo.index.commit("[MLABweb] %s %s" %(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()), db_data['name']), author=author, committer=author)
+        repo.index.commit("[MLABweb] %s; %s" %(self.get_argument('commit_msg', "Documentation edits"), self.get_argument('name', "MODULE")), author=author, committer=author)
 
 
 

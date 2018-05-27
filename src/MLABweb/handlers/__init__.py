@@ -22,36 +22,21 @@ import os
 class BaseHandler(tornado.web.RequestHandler):
 
     def prepare(self):
-
-        print("prepare ----")
         self.xsrf_token
-        #self.mdb = pymongo.MongoClient('localhost', 27017)
         self.db_web = pymongo.MongoClient('localhost', 27017).MLABweb
-        print(self.db_web)
-
 
     def get_current_user(self):
-        #print help(tornado.locale.get())
-        #print tornado.locale.get("es_LA")
-        #print help(tornado.locale.get().get_closest(['cs','en']))
-        #print tornado.locale.get('cs_CZ')
-        #print tornado.locale.get_supported_locales()
-        #print "language:"
-        #print self.get_user_locale()
         login = self.get_secure_cookie("login")
         token = self.get_secure_cookie("token")
-        #print "login", login
-        #print "taken", token
+        
         if not login:
+            print("neni prihlasen")
             return None
         else:
-            #return _sql("SELECT * from Users WHERE login = '%s'" %(login))[0]
             print("_id", login)
-            #self.mdb = pymongo.MongoClient('localhost', 27017)
-            #print(self.mdb)
             user = self.db_web.Users.find_one({"_id": login})
-            #print user
-            print "Logen in", user['civil_name']
+    
+            print("Logen in", user['civil_name'])
             return user
 
     def get_user_locale(self):
@@ -86,33 +71,3 @@ Subject: %s
 
 def _sql():
     pass
-
-'''
-def _sql(query, read=False, db="MLAB"):
-        print "#>", query
-        #connection = mdb.connect(host="localhost", user="root", passwd="root", db=db, use_unicode=True, charset="utf8", cursorclass=mdb.cursors.DictCursor)
-        
-
-        connection = pymysql.connect(host='localhost',
-                                     user=tornado.options.options.mysql_user,
-                                     password=tornado.options.options.mysql_pass,
-                                     db=db,
-                                     charset='utf8',
-                                     cursorclass=pymysql.cursors.DictCursor)
-
-        try:
-            cursorobj = connection.cursor()
-            result = None
-            cursorobj.execute(query)
-            result = cursorobj.fetchall()
-            if not read:
-                connection.commit()
-            connection.close()
-            #print "################################"
-            #print result
-            return result
-        except Exception, e:
-                print "Err", e
-                connection.close()
-                return ()
-'''

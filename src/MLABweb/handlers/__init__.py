@@ -24,10 +24,17 @@ class BaseHandler(tornado.web.RequestHandler):
     def prepare(self):
         self.xsrf_token
         self.db_web = pymongo.MongoClient('localhost', 27017).MLABweb
+        print("Prepare >> ", self.db_web)
 
     def get_current_user(self):
         login = self.get_secure_cookie("login")
         token = self.get_secure_cookie("token")
+
+        try:
+        	self.db_web
+        except Exception as e:
+        	print("Bezpecnostni procedura.... ")
+        	self.db_web = pymongo.MongoClient('localhost', 27017).MLABweb
         
         if not login:
             print("neni prihlasen")

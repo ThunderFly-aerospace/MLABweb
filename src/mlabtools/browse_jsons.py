@@ -17,7 +17,7 @@ def main():
     db = pymongo.MongoClient("localhost", 27017).MLABweb
 
     data = db.Modules.find()
-    modules_dic = '/data/Modules/'
+    modules_dic = '/data/mlab/Modules/'
 
     print("Nasledujici vypis obsahuje seznam modulu, ktere maji v json souboru spatne nastavenou cestu oproti realne.")
 

@@ -52,16 +52,18 @@ class module_detail(BaseHandler):
     @asynchronous
     def get(self, module = None):
         print module
-        #self.write("ahoj")
-        #module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
+        
         module_data = self.db_web.Modules.find({"_id": module})[0]
-        #print type(module_data)
-        #print module_data
-        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*.jpg")
-        images.extend(glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*.png"))
+        module_path = tornado.options.options.mlab_repos+module_data['root']
 
-        #print images
-        self.render("modules.detail.hbs", db_web = self.db_web, module=module, module_data=module_data, images = images, documents = glob2.glob(tornado.options.options.mlab_repos+module_data['root']+"//**/*.pdf"))
+        print(module_path)
+        
+        images = glob.glob(module_path+"/doc/img/*.jpg")
+        images.extend(glob.glob(module_path+"/doc/img/*.png"))
+
+        print("List of images")
+        print(images)
+        self.render("modules.detail.hbs", db_web = self.db_web, module=module, module_data=module_data, images = images, documents = glob2.glob(module_path+"//**/*.pdf"))
 
 class module_comapare(BaseHandler):
     @asynchronous

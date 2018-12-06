@@ -94,8 +94,8 @@
         {# {{images}} #}
           <div class="">
           {% for image in images %}
-              <a href="/repos/{{image[14:]}}" data-toggle="lightbox" data-gallery="example-gallery" style="padding-right: 4px; margin-top: 10pt">
-                  <img src="/repos/{{image[14:]}}" class="img-thumbnail rounded" style="padding: 0pt; width: calc(33% - 5px);">
+              <a href="/repos/{{image[19:]}}" data-toggle="lightbox" data-gallery="example-gallery" style="padding-right: 4px; margin-top: 10pt">
+                  <img src="/repos/{{image[19:]}}" class="img-thumbnail rounded" style="padding: 0pt; width: calc(33% - 5px);">
               </a>
           {% end %}
         </div>
@@ -126,7 +126,7 @@
         </div>
         <div class="tab-pane" id="download" role="tabpanel" style="padding: 10pt;">
             {% for documet in documents %}
-              <li><a href="https://github.com/MLAB-project/Modules/tree/master/{{documet[14:]}}">{{documet[14:]}}</a></li>
+              <li><a href="https://github.com/MLAB-project/Modules/tree/master/{{documet[19:]}}">{{documet[19:]}}</a></li>
             {% end %}
         </div>
       </div>

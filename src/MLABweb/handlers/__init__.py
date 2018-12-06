@@ -5,7 +5,7 @@ import MySQLdb as mdb
 import pymongo
 
 import os
-import pymysql.cursors
+#import pymysql.cursors
 
 import tornado
 from requests_oauthlib import OAuth2Session

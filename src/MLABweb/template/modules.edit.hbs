@@ -21,7 +21,7 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
 
  <script type="text/javascript">
    var images = [{% for image in images %}
-      {title: '{{image}}', value: 'http://www.mlab.cz/repos/{{image[13:]}}'},
+      {title: '{{image}}', value: 'http://www.mlab.cz/repos/{{image[18:]}}'},
       {% end %}]
  </script>
 
@@ -251,7 +251,7 @@ var upload = function() {
 
         <label name="post-title" for="image">Náhledy obrázků. <small>Jsou ve stejném pořadí jako je seznam pro výběr hlavního obrázku.</small></label>
         <div>{% for image in images %}
-                  <img src="/repos/{{image[13:]}}" style="height: 3cm;">
+                  <img src="/repos/{{image[19:]}}" style="height: 3cm;">
         {%end%}</div>
 
 
@@ -475,7 +475,7 @@ var upload = function() {
 
   var crop_title = $('#image_cropper').croppie({
     viewport: {width: 200, height: 200},
-    url: '/repos{% for image in images %}{% if module_data.get("image", '') == image[image.find("/doc"):] %}{{image[13:]}}{%end%}{%end%}',
+    url: '/repos{% for image in images %}{% if module_data.get("image", '') == image[image.find("/doc"):] %}{{image[18:]}}{%end%}{%end%}',
   });
 
 

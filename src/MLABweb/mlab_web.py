@@ -17,7 +17,7 @@ import datetime
 import calendar
 
 
-from handlers import github, admin, auth
+from handlers import github, admin, auth, api
 from handlers import _sql, BaseHandler, basic
 
 
@@ -61,6 +61,9 @@ class WebApp(tornado.web.Application):
             (r'/module/(.*)/', admin.module_detail),
             (r'/module/(.*)', admin.module_detail),
             (r'/modules/all', admin.modules_overview),
+
+            (r'/api/modules/', api.modules),
+            (r'/api/module/(.*)/', api.module),
 
             (r'/admin/', admin.home),
             (r'/modules', admin.modules),

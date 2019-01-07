@@ -1,30 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import tornado
-#from tornado import web
 from tornado import ioloop
-from tornado import auth
-from tornado import escape
-from tornado import httpserver
 from tornado import options
 from tornado import web
 import functools
 import json
-#import sqlite3
-import MySQLdb as mdb
 import time
 import datetime
 import calendar
 
-
 from handlers import github, admin, auth, api
 from handlers import _sql, BaseHandler
 
-
 tornado.options.define("port", default=10010, help="port", type=int)
 tornado.options.define("debug", default=False, help="debug mode")
-tornado.options.define("mysql_user", default=None, help="mysql user")
-tornado.options.define("mysql_pass", default=None, help="mysql pass")
 tornado.options.define("mlab_repos", default=None, help="Where is MLAB repository stored")
 tornado.options.define("mlabgen", default=None, help="Where is mlabgen repository stored")
 tornado.options.define("github_token", default=None, help="Github Oauth2 token code")
@@ -125,15 +115,12 @@ class WebApp(tornado.web.Application):
 def main():
     import os
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
     tornado.options.parse_config_file("/etc/mlab.conf")
     #tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(WebApp())
     http_server.listen(tornado.options.options.port)
     tornado.ioloop.IOLoop.instance().start()
     #http_server.start(4)
-
-
 
 if __name__ == "__main__":
     main()

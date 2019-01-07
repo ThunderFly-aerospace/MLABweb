@@ -10,25 +10,25 @@ import glob2
 import shutil
 import time
 #from tornado import web
-from tornado import ioloop
-from tornado import auth
+#from tornado import ioloop
+#from tornado import auth
 from tornado import escape
 from tornado import httpserver
 from tornado import options
 from tornado import web
 from tornado.web import asynchronous
 from tornado import gen
-import git
-from git import Repo, Actor
+#import git
+#from git import Repo, Actor
 import os
-from PIL import Image
-import qrcode
+#from PIL import Image
+#import qrcode
 
 import re
 from six.moves.html_parser import HTMLParser
 from w3lib.html import replace_entities
 from . import _sql, BaseHandler, sendMail
-import subprocess
+#import subprocess
 
 
 class permalink(BaseHandler):

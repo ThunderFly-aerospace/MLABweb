@@ -18,7 +18,7 @@ import calendar
 
 
 from handlers import github, admin, auth, api
-from handlers import _sql, BaseHandler, basic
+from handlers import _sql, BaseHandler
 
 
 tornado.options.define("port", default=10010, help="port", type=int)

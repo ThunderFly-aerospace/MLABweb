@@ -27,6 +27,8 @@ tornado.options.define("mysql_user", default=None, help="mysql user")
 tornado.options.define("mysql_pass", default=None, help="mysql pass")
 tornado.options.define("mlab_repos", default=None, help="Where is MLAB repository stored")
 tornado.options.define("mlabgen", default=None, help="Where is mlabgen repository stored")
+tornado.options.define("github_token", default=None, help="Github Oauth2 token code")
+tornado.options.define("github_secret", default=None, help="Github Oauth2 secret code")
 
 
 class all(BaseHandler):
@@ -103,7 +105,7 @@ class WebApp(tornado.web.Application):
             (r"/(.*)", admin.home),
         ]
         settings = dict(
-            cookie_secret="ROT13IrehaxnWrArwyrcfvQvixnAnFirgr",
+            cookie_secret="ejuchocrhioke3pkeuipoiiqeuiijeik",
             template_path= "template/",
             static_path= "static/",
             xsrf_cookies=False,
@@ -125,7 +127,7 @@ def main():
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
     tornado.options.parse_config_file("/etc/mlab.conf")
-    tornado.options.parse_command_line()
+    #tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(WebApp())
     http_server.listen(tornado.options.options.port)
     tornado.ioloop.IOLoop.instance().start()

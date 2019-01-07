@@ -63,12 +63,11 @@
       <li class=""><a href="#home_contact">{{ _("Contact")}}</a></li>
       <li class=""><a href="https://github.com/MLAB-project">GitHub</a></li>
       <li class=""><a href="http://wiki.mlab.cz/">Wiki</a></li>
-      {# <li>{%if current_user %} <a href="/logout/">{{ _("Log out")}} {{current_user['name']}} {%else%} <a href="/login/"> {{ _("Log in") }} {%end%}</a></li> #}
-        
       <li class="submenu"> <a>{{_("Language")}}</a><div class="submenu_show"><ul>
         <li> <a onclick="setLang('cs_CZ')"><img src="/static/media/flags/CZ.png" alt="Czech"> Cs </a></li>
         <li> <a onclick="setLang('en_UK')"><img src="/static/media/flags/GB.png" alt="English"> En </a></li>
       </ul></div></li>
+      <li>{%if current_user %} <a href="/logout/">{{ _("Log out")}} <small> {{current_user['civil_name']}}</small> {%else%} <a href="/login/"> {{ _("Log in") }} {%end%}</a></li>
     </ul></div>
   </div><hr style="margin: 0px; margin-top: 10pt;">
   

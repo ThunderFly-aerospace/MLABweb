@@ -4,11 +4,11 @@
 import tornado.escape
 from tornado import web
 from tornado import websocket
+from tornado import options
 from . import BaseHandler, sendMail#, _sql
 import json
 import datetime
 import smtplib
-
 
 import urllib
 import urllib2
@@ -18,7 +18,7 @@ from requests_oauthlib import OAuth2Session
 
 class O_logout(BaseHandler):
     def get(self):
-        print "odhlasuji TE!!!!!!!!!!!!!!!"
+        print("[LOGIN]: Odhlaseni")
         self.clear_cookie("login")
         self.clear_cookie("token")
 
@@ -28,43 +28,32 @@ class O_logout(BaseHandler):
 class O_login(BaseHandler):
     def get(self):
         login = self.get_secure_cookie("login", None)
-        #token = eval(self.get_secure_cookie("token", None))
+        print("[LOGIN]: Login requests by: {}".format(login))
 
-        print "###########################"
-        print login
+        github = OAuth2Session(options.options.github_token, scope = ["user:email"])
+        authorization_url, state = github.authorization_url('https://github.com/login/oauth/authorize', presmerovani="TEST")
 
-        #else:
-        github = OAuth2Session("ed66f4255ebebd63b335", scope = ["user:email"])
-        authorization_url, state = github.authorization_url('https://github.com/login/oauth/authorize')
-
-        print "redirect", state, authorization_url
         self.redirect(authorization_url)
 
-        #print "redirect"
-        #self.redirect('https://github.com/login/oauth/authorize?client_id=%s' %("ed66f4255ebebd63b335"), permanent=True)
-
 class O_github(BaseHandler):
-
     def get(self):
+        print("[LOGIN]: PRESMEROVANI:", self.get_argument('presmerovani', "NIC"))
         github_code = self.get_argument('code', None)
-        github = OAuth2Session("ed66f4255ebebd63b335", scope = ["user:email"])
-        token = github.fetch_token('https://github.com/login/oauth/access_token', code = github_code, client_secret='44eebca3bf45fa8357731d1c87ceaeb840922a61')
+        github = OAuth2Session(options.options.github_token, scope = ["user:email"])
+        token = github.fetch_token('https://github.com/login/oauth/access_token', code = github_code, client_secret=options.options.github_secret)
         user_j = github.get('https://api.github.com/user').json()
         email_j = github.get('https://api.github.com/user/emails').json()
-        print 'GithubLogin', github_code, user_j, email_j
+        print('[LOGIN]: GithubLogin', github_code, user_j, email_j)
         user_db = self.db_web.Users.find({"_id":user_j['login']}).count()
 
-        print ">> Token:", token
-        print ">> User:", user_j
-        print "------------"
-
+        print("[LOGIN]: Token:", token)
+        print("[LOGIN]: User:", user_j)
+        
         email = None
         for e in email_j:                   # najdi mail, ktery je primarni
             if e['primary'] == True:
                 email = e['email']
-            else:
-                print "mail vedlejsi", e
-        print ">>Email:", email
+        print("[LOGIN]: Email:", email)
 
 
         self.set_secure_cookie('login', user_j['login'])
@@ -89,17 +78,17 @@ class O_github(BaseHandler):
                 "date_joined": datetime.datetime.utcnow(),
                 "last_login": datetime.datetime.utcnow(),
                 "service_data": user_j,
-
                 }
             )
 
+            #TODO: registracni email - není dokoncena sablona pro welcome mail.
             #sendMail("%s<%s>"%(user_j['name'],email),"Welcome to  RTbolidozor", open("/home/roman/repos/RTbolidozor/emails/new_reg","r").read()%(user_j['name']))
-            print "novy uzivatel"
+            print("[LOGIN]: novy uzivatel")
             self.redirect("/newuser")
 
         else:
-            print  "Chyba, prosím nahlašte do mailinglistu Bolidozoru GitHub č.0003"
-            self.write("Chyba, prosím nahlašte do mailinglistu Bolidozoru GitHub č.0003 nebo na email dms@mlab.cz")
+            print("[LOGIN]: Chyba, prosím nahlašte do mailinglistu Bolidozoru GitHub č.0003")
+            self.write("[LOGIN]: Chyba, prosím nahlašte do mailinglistu Bolidozoru GitHub č.0003 nebo na email dms@mlab.cz")
 
 class newuser(BaseHandler):
     def get(self):

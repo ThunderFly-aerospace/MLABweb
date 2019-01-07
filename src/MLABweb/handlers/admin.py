@@ -34,7 +34,7 @@ import subprocess
 class permalink(BaseHandler):
     @asynchronous
     def get(self, module = None):
-        print module
+        print(module)
         module_data = self.db_web.Modules.find({"_id": module})[0]
         documents = glob2.glob(tornado.options.options.mlab_repos+module_data['root']+"//**/*.pdf")
         images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"doc/img/*")
@@ -43,32 +43,25 @@ class permalink(BaseHandler):
 class home(BaseHandler):
     @asynchronous
     def get(self, data=None):
-        print "HomePage"
-       
         module_data = self.db_web.Modules.find({ "$and": [ {"$or":[{'status': 2}, {'status':'2'}]}, {'mark': {"$gte": 45}}, {"$where": "this.longname_cs.length > 20"}, {"$where": "this.image.length > 4"}, {'image':{"$not":re.compile("QRcode")}}]})
         self.render("index.hbs", parent=self, modules = module_data)
 
 class module_detail(BaseHandler):
     @asynchronous
     def get(self, module = None):
-        print module
+        print(module)
         
         module_data = self.db_web.Modules.find({"_id": module})[0]
         module_path = tornado.options.options.mlab_repos+module_data['root']
 
-        print(module_path)
-        
         images = glob.glob(module_path+"/doc/img/*.jpg")
         images.extend(glob.glob(module_path+"/doc/img/*.png"))
-
-        print("List of images")
-        print(images)
         self.render("modules.detail.hbs", db_web = self.db_web, module=module, module_data=module_data, images = images, documents = glob2.glob(module_path+"//**/*.pdf"))
 
 class module_comapare(BaseHandler):
     @asynchronous
     def get(self, module = None):
-        print module, "< compare"
+        print(module, "< compare")
         module_data = _sql("SELECT * FROM MLAB.Modules WHERE name='%s'" %(module))[0]
 
         doc_cs = open(tornado.options.options.mlab_repos+module_data['root']+'/doc/src/module.cs.html').read()
@@ -76,9 +69,7 @@ class module_comapare(BaseHandler):
         self.render("modules.compare.hbs", _sql=_sql, module=module, module_data=module_data, doc_cs=doc_cs, doc_en=doc_en)
 
 class categories(BaseHandler):
-
     def get(self):
-        pass
         categories = self.db_web.Category.find()
         self.render("categories.edit.hbs", categories = categories)
     
@@ -86,17 +77,15 @@ class categories(BaseHandler):
 
 class modules(BaseHandler):
     def make_list(self, input):
-        print input
+        print(input)
         if isinstance(input, list): return input
         else: return [input]
 
     @asynchronous
     def get(self, category = None):
-        print "modules"
-        print category
+        print("[MODULES] {}".format(category))
         status = None
         if 'status' in self.request.arguments:
-            print "STATUS>>>", self.request.arguments['status']
             status = ",".join(self.make_list(self.request.arguments['status']))
             self.set_cookie("status", status)
             statuss = status.split(",")
@@ -105,8 +94,8 @@ class modules(BaseHandler):
             statuss = self.get_cookie('status', "2").split(",")
             status = map(int, statuss)
         status = status + statuss
-        print "status", status
-        print "category", category
+        #print "status", status
+        #print "category", category
 
 
         if category:
@@ -168,7 +157,7 @@ class modules_overview(BaseHandler):
     @asynchronous
     #@tornado.web.authenticated
     def get(self):
-        print "modules overview"
+        #print("modules overview")
         order = self.get_argument('order', '_id')
         modules = self.db_web.Modules.find().sort([(order, 1)])
         self.render("modules.overview.hbs", parent=self, modules = modules)
@@ -176,13 +165,13 @@ class modules_overview(BaseHandler):
 class moduleImageUpload(tornado.web.RequestHandler):
     def post(self):
 
-        print self.request.files
+        #print self.request.files
         fileinfo = self.request.files['filearg'][0]
-        print "fileinfo is", fileinfo
+        #print "fileinfo is", fileinfo
         fname = fileinfo['filename']
         extn = os.path.splitext(fname)[1]
         cname = str(uuid.uuid4()) + extn
-        print cname
+        #print cname
         
         #fh = open(__UPLOADS__ + cname, 'w')
         #fh.write(fileinfo['body'])

@@ -5,17 +5,16 @@
   .classTable1{
     border: black solid;
   }
-
 </style>
-
 
 <script src="/static/Croppie/croppie.min.js"></script>
 <link rel="stylesheet" href="/static/Croppie/croppie.css" />
 
-<script type="text/javascript">
-  
-var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'") %};
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
+<script type="text/javascript">
+var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'") %};
 </script>
 
 
@@ -112,7 +111,11 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
         {
             commit_msg: document.getElementById('commit_msg').value,
             name: document.getElementById('name').value,
+			{% if new %}
+            root: document.getElementById('root').value + document.getElementById('name').value,
+           	{% else %}
             root: document.getElementById('root').value,
+            {% end %}
             wiki: document.getElementById('wiki').value,
             ust: document.getElementById('ust').value,
             mark: document.getElementById('mark', 0).value,
@@ -210,7 +213,15 @@ var upload = function() {
           </div>
           <div class="form-group col-6">
             <label name="post-title" for="root">Root (relative path from repo root to module root)</label>
+{% if not new %}
             <input type="text" class="form-control" id="root" {% if not new%} value = "{{module_data['root']}}" {%end %}></input>
+{% else %}
+			<div><select id="root">
+            	{%for x in directories %}
+            		<option>{{x}}/</option>
+            	{% end %}
+            </select></div>
+{% end %}
           </div>
           </div>
         <div class="row">
@@ -272,10 +283,10 @@ var upload = function() {
 
 
             <div class="form-group col-3">
-            <label name="post-title" for="exampleSelect2">Kategorie</label>
+            <label name="post-title" for="exampleSelect2">Kategorie <label onclick="setCategoryByRoot()" class="badge badge-success">Určit automaticky</label></label>
             <select  class="multiselect form-control" name="categories[]" multiple="multiple" id="categories">
               {% for cat in db_web.Category.find() %}
-                <option {% if cat['_id'] in module_data.get('category[]', [])%}selected{%end%} value="{{cat['_id']}}">{{cat.get('cs', "No name")}} <small>[{{cat['path']}}{{cat['_id']}}]</small></option>
+                <option {% if cat['_id'] in module_data.get('category[]', [])%}selected{%end%} value="{{cat['_id']}}" folder="{{cat['path']}}">{{cat.get('cs', "No name")}}<small> - {{cat['_id']}} [{{cat['path']}}]</small></option>
               {% end %}
             </select>
             </div>
@@ -350,8 +361,6 @@ var upload = function() {
           </table>
           </div>
         </div>
-
-
         
         <br>
         <ul class="nav nav-tabs" role="tablist">
@@ -551,6 +560,28 @@ var upload = function() {
 
     make_param_table();
   }
+
+
+function setCategoryByRoot(){
+	var root = $('#root').val();
+	var category = $('[folder="'+root+'"]').val();
+	$('#categories').val(category);
+	$('#categories').trigger('change');
+	return category;
+}
+
+
+
+{% if new %}
+	$('#root').select2({
+		tags:true,
+	});
+	
+	$('#root').on('select2:select', function (e) {
+  		setCategoryByRoot()
+	});
+{% end %}
+
 
 
 </script>

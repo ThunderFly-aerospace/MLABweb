@@ -30,7 +30,7 @@ class O_login(BaseHandler):
         login = self.get_secure_cookie("login", None)
         print("[LOGIN]: Login requests by: {}".format(login))
 
-        github = OAuth2Session(options.options.github_token, scope = ["user:email"])
+        github = OAuth2Session(options.options.github_token, scope = ["user"])
         authorization_url, state = github.authorization_url('https://github.com/login/oauth/authorize', presmerovani="TEST")
 
         self.redirect(authorization_url)
@@ -39,7 +39,7 @@ class O_github(BaseHandler):
     def get(self):
         print("[LOGIN]: PRESMEROVANI:", self.get_argument('presmerovani', "NIC"))
         github_code = self.get_argument('code', None)
-        github = OAuth2Session(options.options.github_token, scope = ["user:email"])
+        github = OAuth2Session(options.options.github_token, scope = ["user"])
         token = github.fetch_token('https://github.com/login/oauth/access_token', code = github_code, client_secret=options.options.github_secret)
         user_j = github.get('https://api.github.com/user').json()
         email_j = github.get('https://api.github.com/user/emails').json()
@@ -67,6 +67,8 @@ class O_github(BaseHandler):
             self.redirect("/")
 
         elif user_db == 0: # Novy uzivatel
+            if not user_j['name']: user_j['name'] = user_j['login']
+            print(user_j)
             self.db_web.Users.insert_one({
                 "_id": user_j['login'],
                 "login": user_j['login'],

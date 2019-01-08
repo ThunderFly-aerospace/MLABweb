@@ -18,11 +18,11 @@ from tornado import options
 from tornado import web
 from tornado.web import asynchronous
 from tornado import gen
-#import git
-#from git import Repo, Actor
+import git
+from git import Repo, Actor
 import os
-#from PIL import Image
-#import qrcode
+from PIL import Image
+import qrcode
 
 import re
 from six.moves.html_parser import HTMLParser
@@ -181,19 +181,24 @@ class module_edit(BaseHandler):
     @tornado.web.authenticated
     #@asynchronous
     def get(self, module=None):
+        directories = set()
         if module:
             new = False
             module_data = self.db_web.Modules.find_one({"_id": module})
             images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*")
         else:
             new = True
+            path = glob2.glob(os.path.join(tornado.options.options.mlab_repos, '**/*.json'))
+            crop = len(tornado.options.options.mlab_repos)
+            for p in path:
+                directories.add('/'.join(p[crop:].split('/')[:-2]))
+            print("[EDIT]", directories)
             module_data = {
                 'status': 1,
             }
             images = []
 
-
-        self.render("modules.edit.hbs", parent=self, module_data=module_data, images = images, db_web = self.db_web, all = True, new = new)
+        self.render("modules.edit.hbs", parent=self, module_data=module_data, images = images, db_web = self.db_web, all = True, new = new, directories = list(directories))
     
     def make_list(self, input):
         if isinstance(input, list): return input

@@ -208,10 +208,10 @@ class module_edit(BaseHandler):
     def post(self, module=None):
         modules_root = tornado.options.options.mlab_repos
 
-        print("POST: module_edit")
         module = self.get_argument('name').strip()
-        print("Modul", module)
+        print("[EDIT][POST]:", module)
 
+        # pokud slozka neexistuje vytvorit novou
         if not os.path.isfile(os.path.join(modules_root, self.get_argument('root', ''), module+'.json')):
             print("Slozka pro tento modul - vytvarim ji")
             shutil.copytree(tornado.options.options.mlabgen+'module', tornado.options.options.mlab_repos+self.get_argument('root'))
@@ -222,10 +222,12 @@ class module_edit(BaseHandler):
                         if not any(s in file for s in ['kicad_wks']):
                             shutil.move(root+"/"+file, root+"/"+file.replace('module', self.get_argument('name')))
 
-        image_path = self.get_argument('image', '').strip()
+        image_path = str(self.get_argument('image', '')).strip()
+        print("IMAGE PATH", image_path)
         if image_path == '':
-            image_path = "/doc/img/"+module+"_QRcode.jpg"
-        image_small = (os.path.splitext(self.get_argument('image'))[0]+'.jpgs').strip()
+            image_path = "/doc/img/"+module+"_QRcode.png"
+        print("Image path NEW", image_path)
+        #image_small = (os.path.splitext(self.get_argument('image'))[0]+'.jpgs').strip()
 
         print(self.request.arguments)
 
@@ -244,7 +246,7 @@ class module_edit(BaseHandler):
                 "doc_cs": self.get_argument('doc_cs'),
                 "doc_en": self.get_argument('doc_en'),
                 "image": image_path,
-                "image_small": image_small,
+                "image_small": image_path,
                 "status": int(self.get_argument('status').strip()),
                 "mark": float(self.get_argument('mark').strip()),
                 "author[]": self.make_list(self.get_arguments('author[]')),
@@ -279,11 +281,11 @@ class module_edit(BaseHandler):
                 qr.make_image().save(module_qr_path)
             except Exception as e: pass
 
-        try:
-            im = Image.open(tornado.options.options.mlab_repos+self.get_argument('root')+self.get_argument('image'))
-            im.thumbnail((512,512), Image.ANTIALIAS)
-            im.save(tornado.options.options.mlab_repos+self.get_argument('root')+image_small, 'JPEG', quality=65)
-        except Exception as e: pass
+        #try:
+        #    im = Image.open(tornado.options.options.mlab_repos+self.get_argument('root')+self.get_argument('image'))
+        #    im.thumbnail((512,512), Image.ANTIALIAS)
+        #    im.save(tornado.options.options.mlab_repos+self.get_argument('root')+image_small, 'JPEG', quality=65)
+        #except Exception as e: pass
 
 
         '''

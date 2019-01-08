@@ -5,6 +5,21 @@
   .classTable1{
     border: black solid;
   }
+
+
+  .loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
 
 <script src="/static/Croppie/croppie.min.js"></script>
@@ -101,20 +116,25 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
       return list
     }
 
+    function validate_input(){
+
+    }
+
     $(document).ready(function() {
 
     make_param_table(param_json);
 
     $("#save").click(function(event) {
         $('#waitmodal').modal('show');
+        validate_input();      
         $.post("edit",
         {
             commit_msg: document.getElementById('commit_msg').value,
             name: document.getElementById('name').value,
-			{% if new %}
-            root: document.getElementById('root').value + document.getElementById('name').value,
+            {% if new %}
+                root: document.getElementById('root').value + document.getElementById('name').value,
            	{% else %}
-            root: document.getElementById('root').value,
+                root: document.getElementById('root').value,
             {% end %}
             wiki: document.getElementById('wiki').value,
             ust: document.getElementById('ust').value,
@@ -197,6 +217,18 @@ var upload = function() {
 
 
 </script>
+
+
+<div id="waitmodal" class="modal fade bd-example-modal-sm" data-keyboard=false data-backdrop=false style="background: rgba(0.2, 0.2, 0.2, 0.5);">
+  <div class="modal-dialog modal-sm" style="margin: auto; height: 300px;">
+    <div class="modal-content" style="margin: auto; height: 300px;">
+        <div style="margin: auto;">
+          <div class="loader"></div> 
+          Ukládání...
+        </div>
+    </div>
+  </div>
+</div>
 
 
 {%if not module_data %}

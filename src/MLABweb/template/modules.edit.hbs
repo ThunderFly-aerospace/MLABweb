@@ -16,6 +16,10 @@
   animation: spin 2s linear infinite;
 }
 
+  #image_show img{
+    height: 4cm;
+  }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -117,6 +121,13 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
     }
 
     function validate_input(){
+    name = document.getElementById('name').value
+    var new_name = name.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'');
+
+    if((name != new_name)||(new_name == '')){
+      console.log("Spatny nazev");
+    }
+
 
     }
 
@@ -125,8 +136,9 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
     make_param_table(param_json);
 
     $("#save").click(function(event) {
+        valid = validate_input();
+        console.log(valid);
         $('#waitmodal').modal('show');
-        validate_input();      
         $.post("edit",
         {
             commit_msg: document.getElementById('commit_msg').value,
@@ -162,59 +174,6 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
         });
     });
     });
-
-
-$('.selectpicker').selectpicker({
-  style: 'btn-info',
-  size: 4
-});
-
-var reader = new FileReader();
-var upload = function() {
-    var photo = document.getElementById("photo");
-    console.log(photo);
-    var file = photo.files[0];
-    console.log(file);
-    console.log("File name: " + file.name);
-    console.log("File size: " + file.size);
-    console.log("Binary content: ", reader.readAsBinaryString(file));
-    //console.log("Text content: " + file.getAsText(""));
-
-    var formData = new FormData();
-
-    // add assoc key values, this will be posts values
-    formData.append("file", file.file, file.name);
-    formData.append("upload_file", true);
-
-    $.ajax({
-        type: "POST",
-        url: "upload_image/",
-        xhr: function () {
-            var myXhr = $.ajaxSettings.xhr();
-            if (myXhr.upload) {
-                myXhr.upload.addEventListener('progress', that.progressHandling, false);
-            }
-            return myXhr;
-        },
-        success: function (data) {
-            console.log("success");
-        },
-        error: function (error) {
-            // handle error
-            console.log("error", error);
-        },
-        async: true,
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        timeout: 60000
-    });
-
-    return false;
-};
-
-
 
 </script>
 
@@ -262,11 +221,20 @@ var upload = function() {
             <input type="text" class="form-control" id="wiki" {% if not new%} value = "{{module_data['wiki']}}" {%end %}></input>
           </div>
           <div class="form-group col-6">
-            <label name="post-title" for="ust">UST</label>
+            <label name="post-title" for="ust">UST eshop</label>
             <input type="text" class="form-control" id="ust" {% if not new%} value = "{{module_data['ust']}}" {%end %}></input>
           </div>
         </div>
 
+
+{% if new %}
+        <div class="p-3 mb-3 bg-warning text-dark row">
+          Pro přidání nových fotek a obrázků nejdříve dokončete úpravy základních popisků. Následně stiskněte uložit. Bude vytvořen QR kód. Po úspěšném uložení můžete přidávat obrázky i z webového rozhraní. 
+        </div>
+{% else %}
+        <div class="p-3 mb-3 bg-warning text-dark row">
+          Pole pro ořez obrázku zatím není funkční. Slouží pouze pro náhled primárního obrázku.
+        </div>
         <div class="row">
         <div id="image_cropper" class="col-3" style="height: 250pt; width: 250pt; margin-bottom: 35pt"></div>
         <div class="form-group" class="col-7">
@@ -280,21 +248,58 @@ var upload = function() {
                   {%end%}
               </select>
           </div>
-
-        <label>Upload photo - upload fotek zatim neni funkcni</label>    
-        <form onsubmit="return upload();">
-        <fieldset>
-          <input type="file" name="photo" id="photo">
-          <input type="button" value="Upload" onclick="upload()">
-        </fieldset>
-      </form>
-
+          <input id="upload_image" type="file" name="image"  accept="image/*"/><input type="button" value="Upload" id="btn_upload">
         </div>
-      </div>
+        </div>
+
+<script type="text/javascript">
+  
+  function reload_images(data){
+    console.log(data);
+    for(x in data){
+      console.log(data[x]);
+      
+      $("#image").empty();
+      var option = document.createElement("option");
+      option.value = data[x]['local'];
+      option.text = data[x]['local'];
+      $("#image").append(option);
+
+      $("#image_show").empty();
+      var option = document.createElement("img");
+      option.src = data[x]['url'];
+      $("#image_show").append(option);
+    }
+  }
+
+
+  $('#btn_upload').on('click',function(){    
+        formdata = new FormData();
+        
+        file = $("#upload_image").prop('files')[0];
+        formdata.append("image", file);
+        formdata.append("module", {'name': document.getElementById('name').value});
+        console.log(formdata);
+
+        $.ajax({
+            url: "/module/"+document.getElementById('name').value+"/edit/upload_image/",
+            type: "POST",
+            data: formdata,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                 reload_images(result);
+            }
+        });
+  });
+
+</script>
+{% end %}
+
 
         <label name="post-title" for="image">Náhledy obrázků. <small>Jsou ve stejném pořadí jako je seznam pro výběr hlavního obrázku.</small></label>
-        <div>{% for image in images %}
-                  <img src="/repos/{{image[19:]}}" style="height: 3cm;">
+        <div id="image_show">{% for image in images %}
+                  <img src="/repos/{{image[19:]}}"">
         {%end%}</div>
 
 
@@ -412,11 +417,11 @@ var upload = function() {
             <div class="tab-pane active" id="cs_CZ" role="tabpanel">
               <h2>Česky</h2>
                 <div class="form-group">
-                  <label name="post-title" for="post-title">Dlouhý název</label>
+                  <label name="post-title" for="post-title">Podnadpis</label>
                   <input type="text" class="form-control" id="longname_cs" {% if not new%} value = "{{module_data['longname_cs']}}" {%end %}></input>
                 </div>
                 <div class="form-group">
-                  <label name="post-title" for="post-title">Krátký popis</label>
+                  <label name="post-title" for="post-title">Stručný popis</label>
                   <input type="text" class="form-control" id="short_cs" rows="5" {% if not new%} value = "{{module_data['short_cs']}}" {%end %}></input>
                 </div>
                 <div class="form-group">
@@ -429,11 +434,11 @@ var upload = function() {
             <div class="tab-pane" id="en_US" role="tabpanel">
               <h2>English</h2>
                <div class="form-group">
-                  <label name="post-title" for="post-title">Dlouhý název</label>
+                  <label name="post-title" for="post-title">Podnadpis</label>
                   <input type="text" class="form-control" id="longname_en" {% if not new %} value = "{{module_data['longname_en']}}" {%end %}></input>
               </div>
                 <div class="form-group">
-                  <label name="post-title" for="post-title">Krátký popis</label>
+                  <label name="post-title" for="post-title">Stručný popis</label>
                   <input type="text" class="form-control" id="short_en" rows="5" {% if not new %} value = "{{module_data['short_en']}}" {%end %}></input>
                 </div>
                 <div class="form-group">

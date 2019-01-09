@@ -307,6 +307,26 @@ class module_edit(BaseHandler):
                 qr.make_image().save(module_qr_path)
             except Exception as e: pass
 
+
+        #Generovani README.md
+        data = {
+            'time': '',
+            'autor': '',
+            'email': '',
+            'tags': '',
+            'ust': '',
+            'module': self.get_argument('name').strip(),
+            'subtitle': self.get_argument('longname_en'),
+            'describe': self.get_argument('short_en'),
+            'img': image_path[1:]
+        }
+        readme = self.render_string("documents/module.readme.md", **data)
+
+        output_file = open(tornado.options.options.mlab_repos+db_data['root']+"/README.md", 'wb')
+        output_file.write(readme)
+        output_file.close()
+
+
         #try:
         #    im = Image.open(tornado.options.options.mlab_repos+self.get_argument('root')+self.get_argument('image'))
         #    im.thumbnail((512,512), Image.ANTIALIAS)

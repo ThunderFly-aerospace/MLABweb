@@ -162,20 +162,46 @@ class modules_overview(BaseHandler):
         modules = self.db_web.Modules.find().sort([(order, 1)])
         self.render("modules.overview.hbs", parent=self, modules = modules)
 
-class moduleImageUpload(tornado.web.RequestHandler):
-    def post(self):
+class moduleImageUpload(BaseHandler):
+    '''
+        Tato funkce se stara o prijem uploadovanych obrazku a spravne zarazeni. 
+        Nazev modulu je v URL adrese.
+        Funkce vrátí seznam obrázků od modulu pro jeho snadnou aktualizaci.
+    '''
+    def post(self, module):
+        self.set_header('Content-Type', 'application/json')
+        print("[IMAGE_UPLOAD]")
 
-        #print self.request.files
-        fileinfo = self.request.files['filearg'][0]
-        #print "fileinfo is", fileinfo
-        fname = fileinfo['filename']
-        extn = os.path.splitext(fname)[1]
-        cname = str(uuid.uuid4()) + extn
-        #print cname
+        module_data = list(self.db_web.Modules.find({'_id': module}))[0]
         
-        #fh = open(__UPLOADS__ + cname, 'w')
-        #fh.write(fileinfo['body'])
-        self.finish(cname + " is uploaded!! Check %s folder" %__UPLOADS__)
+        filename = self.request.files['image'][0]['filename']
+
+        output_file = open(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/"+filename, 'wb')
+        output_file.write(self.request.files['image'][0]['body'])
+        output_file.close()
+
+        images = glob.glob(tornado.options.options.mlab_repos+module_data['root']+"/doc/img/*")
+        
+        for i, image in enumerate(images):
+            images[i] = {
+                        'local':image[len(tornado.options.options.mlab_repos)+len(module_data['root']):],
+                        'url': '/repos/'+image[len(tornado.options.options.mlab_repos):]
+                        }
+
+
+        repo = Repo(tornado.options.options.mlab_repos)
+        repo.index.add([module_data['root']])
+        
+        if self.current_user:
+            author = Actor(self.current_user['_id'], self.current_user['email'])
+        else:
+            author = Actor("Anonymn", "dms@mlab.cz")
+        repo.index.commit("[MLABweb] new image", author=author, committer=author)
+
+        output = json.dumps(images)
+        self.write(output)
+
+
 
 class module_edit(BaseHandler):
     @tornado.web.authenticated

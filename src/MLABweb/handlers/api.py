@@ -40,7 +40,7 @@ class module(BaseHandler):
         module_data = list(module_data)
         output = json.dumps(module_data)
         self.write(output)
-        self.finish()     
+        self.finish()
 
 
 class modules(BaseHandler):

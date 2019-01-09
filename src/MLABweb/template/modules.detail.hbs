@@ -15,10 +15,16 @@
 </style>
 
 <script type="text/javascript">
+
+
+//require('ekko-lightbox');
+$(document).ready(function() {
   $(document).on('click', '[data-toggle="lightbox"]', function(event) {
       event.preventDefault();
       $(this).ekkoLightbox();
   });
+});
+
 
 </script>
 
@@ -32,12 +38,6 @@
   <span class="breadcrumb-item active">{{module_data['name']}}</span>
 </nav>
 {% end %}
-
-{#{%for cat in _sql("SELECT * FROM Categories INNER JOIN module_to_category ON module_to_category.category = Categories.id WHERE module_to_category.module = '%s';" %(module_data['_id'])) %}
-{%for cat in db_web.Modules.Find() %}
-
-{{cat['name_cs']}}
-{%end%}#}
 
 <div class="container">
 <div class="row">
@@ -91,7 +91,6 @@
         </tbody><tfoot><tr></tr></tfoot>
         </table><br>
         {% end %}
-        {# {{images}} #}
           <div class="">
           {% for image in images %}
               <a href="/repos/{{image[19:]}}" data-toggle="lightbox" data-gallery="example-gallery" style="padding-right: 4px; margin-top: 10pt">

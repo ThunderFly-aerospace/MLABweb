@@ -1,3 +1,7 @@
+# MLABweb
+
+MLAB home page with web-based tool for creating and editing of [MLAB](https://github.com/MLAB-project/Modules) modules.
+
 
 ### Required prerequisites
 

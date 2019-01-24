@@ -4,7 +4,7 @@
 import tornado
 import json
 from bson.json_util import dumps
-
+import datetime
 import glob
 import glob2
 import shutil
@@ -310,7 +310,8 @@ class module_edit(BaseHandler):
 
         #Generovani README.md
         data = {
-            'time': '',
+            'time': datetime.datetime.now(),
+            'date': datetime.datetime.now().date(),
             'autor': '',
             'email': '',
             'tags': '',

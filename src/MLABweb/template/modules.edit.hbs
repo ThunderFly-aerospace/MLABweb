@@ -138,6 +138,12 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
     $("#save").click(function(event) {
         valid = validate_input();
         console.log(valid);
+
+	var imageUrl = document.getElementById('image');
+        if (imageUrl !== null){
+            imageUrl = document.getElementById('image').value;
+        }
+
         $('#waitmodal').modal('show');
         $.post("edit",
         {
@@ -151,8 +157,8 @@ var param_json = {% raw str(module_data.get('parameters', [])).replace("u'", "'"
             wiki: document.getElementById('wiki').value,
             ust: document.getElementById('ust').value,
             mark: document.getElementById('mark', 0).value,
-            //image: document.getElementById('image').value || null,
-            image: null,
+            image: imageUrl,
+            //image: null,
             image_param: [],
             status: document.getElementById('status').value,
             longname_cs: document.getElementById('longname_cs').value,

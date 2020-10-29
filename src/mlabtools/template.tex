@@ -1,0 +1,111 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english,czech]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage[left=1.2cm,right=1.2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[svgnames]{xcolor}
+\usepackage{tabularx}
+\usepackage{svg}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{wrapfig}
+\usepackage{lastpage}
+%\usepackage{pdfpages}
+\usepackage[final]{pdfpages}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+
+% Redefine \includegraphics so that, unless explicit options are
+% given, the image width will not exceed the width or the height of the page.
+% Images get their normal width if they fit onto the page, but
+% are scaled down if they would overflow the margins.
+\makeatletter
+\def\ScaleWidthIfNeeded{%
+ \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\def\ScaleHeightIfNeeded{%
+  \ifdim\Gin@nat@height>0.9\textheight
+    0.9\textheight
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\setkeys{Gin}{width=\ScaleWidthIfNeeded,height=\ScaleHeightIfNeeded,keepaspectratio}%
+
+
+\author{ \VAR{author} }
+\title{ \VAR{name} }
+
+\fancypagestyle{all}{
+  \fancyhf{}
+  \fancyhead[R]{\includegraphics[height=25pt]{/home/roman/logo_MLAB_long.pdf}}
+  \fancyhead[L]{ {\Huge \VAR{name}  } }
+  \fancyfoot[L]{ \VAR{name}; \today; \VAR{author}; \href{http://www.mlab.cz/}{www.mlab.cz} }
+  \fancyfoot[R]{ Page \thepage\  of \pageref{LastPage} }
+}
+
+\pagestyle{all}
+
+\begin{document}
+%\rmfamily
+\fontsize{14.4}{20}\selectfont
+
+\vspace*{1cm}
+
+\begin{center}
+  {\Huge \VAR{LongName}}
+
+  {\Large \VAR{author}}
+\end{center}
+
+\vspace*{1cm}
+
+
+%% if lead is defined
+\VAR{lead}
+%% endif
+
+\vspace*{1cm}
+
+%% if leadImg is not False
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=15cm]{\VAR{leadImg}} 
+\end{figure}
+%% endif
+
+\vspace*{\fill}
+\vfill
+
+%% if qr
+\begin{figure}[h!]{l}
+    \includegraphics[width=4cm]{\VAR{qr}}
+\end{figure}
+%% endif
+
+\newpage
+\tableofcontents
+
+%% if Description is defined
+\VAR{Description}
+%% endif
+\newpage
+
+
+%% if Content is defined
+\VAR{Content}
+%% endif
+
+\end{document}

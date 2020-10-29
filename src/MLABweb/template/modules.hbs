@@ -1,0 +1,222 @@
+
+{% extends "base.hbs" %}
+{% block content %}
+
+
+
+<style type="text/css">
+	.card{
+		margin: 0px;
+	    margin-bottom: 20px;
+	    margin-left: -5px;
+	    margin-right: -5px;
+
+	}
+	.col-sm-3 {
+		margin: 0px;
+	    margin-bottom: 15px;
+	    margin-left: 0px;
+	    margin-right: 0px;
+
+	}
+
+	ul {
+    -moz-column-count: 5;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 5;
+    -webkit-column-gap: 20px;
+    column-count: 5;
+    column-gap: 20px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+a.selected{
+	font-weight: bold;
+}
+
+</style>
+
+{%if current_user and current_user['is_staff'] %}
+<a href="/modules/all">Modules overview</a>
+<a href="/module/new">New module</a>
+{%end%}
+
+
+<h3> Category {% if category %} <span class="badge badge-pill badge-success">{{category}}</span> {%else%} <small>All</small> {%end%}</h3> 
+
+<div class="card" style="margin-left: -15px; margin-right: -15px;">
+  <div class="card-block">
+	<ul class="columns" style="padding: 15pt;">
+		<li><a href="/module">All</a></li>
+	{% for cat in db_web.Category.find({})%}
+		<li> <a href="/modules/{{cat['_id']}}/" class="{%if category == cat['_id']%}selected{%end%}">{{cat[_('lang_short')]}}</a></li>
+	{% end %}
+	
+	</ul>
+  </div>
+</div>
+
+<p style="margin-left: -15px; margin-right: -15px;">
+	<div class="form-inline form-row">
+
+  	<div class="inline-block mb-3" style="margin-right: 10pt;">
+  		<button class="form-control btn btn-secondary" data-toggle="collapse" href="#filter">Filter</button>
+  	</div>
+
+	<div class="input-group mb-3">
+		<input id="module_search" type="text" class="form-control" placeholder="Vyhledavani ..." aria-label="Search ...." aria-describedby="basic-addon2" onchange="reload()">
+		<div class="input-group-append">
+			<button class="btn btn-outline-success" type="button" onclick="reload()">Search</button>
+		</div>
+	</div>
+
+  </div>
+</p>
+<div class="collapse" id="filter" >
+  <div class="card card-block" style="margin-left: -15px; margin-right: -15px;">
+  	<form method="GET">
+	<div class="row">
+		<div class="col-sm-3">
+			<h5>Status</h5>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="0" {% if status and '0' in status %} checked {%end%}><span class="status status-0" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  Návrh </label></div>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="1" {% if status and '1' in status %} checked {%end%}><span class="status status-1" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  V přípravě</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="2" {% if status and '2' in status %} checked {%end%}><span class="status status-2" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  Produkce</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="3" {% if status and '3' in status %} checked {%end%}><span class="status status-3" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  Nahrazen</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="status" value="4" {% if status and '4' in status %} checked {%end%}><span class="status status-4" style="width: 0.75em; display: inline-block;border: solid 1px; margin-left: 7px;"></span>  Starý</label></div>
+
+		</div>
+		
+		<div class="col-sm-3">
+
+		</div>
+		<div class="col-sm-3">
+
+		</div>
+	</div>
+	<input type="submit" value="Submit">
+	</form>
+  </div>
+</div>
+
+
+<div class="row">
+<div class="card-deck" id="modules_box">
+
+
+  
+{% for module in modules %}
+
+<div class="col-sm-6 col-md-4 col-lg-3 col-xl-3" >
+    <div class="card" style="max-height: 450pt; overflow-y: hidden;">
+    	<a href="/module/{{module['_id']}}/">
+    	{% if not module.get('image', None)%}
+    	<img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/DOC/SRC/img/{{module['_id']}}_Top_Big.jpg" alt="{{module['_id']}}">
+    	{% else %}
+    	<img class="card-img-top" src="/static/loading.png" data-src="/repos/{{module['root']}}/{{module['image']}}" alt="{{module['_id']}}">
+    	{% end %}
+    	</a>
+  
+		<div class="status status-{{module['status']}}"></div>
+    	<div class="card-block" style="padding: 10pt;">
+
+            <div style="margin-bottom: 8pt;">{% for tag in module.get('category[]', []) %}
+              <a href="/modules/{{tag}}/"><span class="badge badge-pill badge-success">{{tag}}</span></a>
+            {%end%}</div>
+
+	      	<h4 class="card-title"><a href="/module/{{module['_id']}}/">{{module['_id']}}</a></h4>
+	      	<p class="card-text">
+				{{module[_('short_cs')]}}
+			</p>
+		</div>
+		{%if current_user and current_user['is_staff'] %}
+	   		 <div class="card-footer">
+	      		<small class="text-muted"><a href="/module/{{module['_id']}}/edit">edit</a></small>
+	    	</div>
+	    {%end%} 
+	</div>
+</div>
+{% end %}
+
+</div>
+</div>
+{#Zobrazeno <i>{{modules.count()}}</i> položek.#}
+
+
+<script id="card-template" type="text/x-custom-template">
+<div class="col-sm-6 col-md-4 col-lg-3 col-xl-3" >
+    <div class="card" style="max-height: 450pt; overflow-y: hidden;">
+    	<a class="card-image" href="/module/module_id/"></a>
+    	
+    	<img class="card-img-top" src="/static/loading.png" data-src="" alt="PWMLED01C">
+
+		<div class="status"></div>
+    	<div class="card-block" style="padding: 10pt;">
+            <div style="margin-bottom: 8pt;"></div>
+	      	<h4 class="card-title"><a class="card_title_text" href="module/_id"></a></h4>
+	      	<p class="card-text"></p>
+		</div>
+		{%if current_user and current_user['is_staff'] %}
+	   		 <div class="card-footer">
+	      		<small class="text-muted"><a class="card-edit-link">edit</a></small>
+	    	</div>
+	    {%end%} 
+	</div>
+</div>
+</script>
+
+<script type="text/javascript">
+	
+function reload(){
+	//var card = $('#card-template').html();
+
+    $("#modules_box").empty();
+	$.ajax({
+        type: "POST",
+        data: {
+        	'search': $("#module_search").val()
+        },
+        success: function (data) {
+            var modules = JSON.parse(data);
+            $("#modules_box").empty();
+            for (mod in modules){
+            	var module = modules[mod];
+            	console.log(module);
+            	var card = $($('#card-template').html());
+
+            	card.find(".card_title_text").text(module['name']);
+            	card.find(".card_title_text").attr("href", "/module/"+module['_id']);
+            	card.find(".card-image").attr("href", "/module/"+module['_id']);
+            	card.find(".status").addClass('status-'+String(module['status']))
+            	card.find(".card-text").replaceWith(module['short_cs']);
+
+            	card.find(".card-img-top").attr("src", '/repos/' + module['root']+module['image']);
+            	card.find(".card-img-top").attr("data-src", '/repos/' + module['root']+module['image']);
+            	card.find(".card-img-top").attr("alt", module['name']);
+
+            	card.find(".card-edit-link").attr("href", '/module/'+module['_id']+'/edit');
+
+            	$("#modules_box").append(card);
+            }
+        },
+        error: function (error) {
+            // handle error
+            console.log("error", error);
+        },
+        async: true,
+        //cache: false,
+        //contentType: false,
+        //processData: false,
+        timeout: 5000
+    });
+
+}
+
+
+</script>
+
+
+{% end %}
+

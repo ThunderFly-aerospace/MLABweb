@@ -1,0 +1,84 @@
+\documentclass[12pt,a4paper,oneside]{article}
+\usepackage[colorlinks=true, unicode]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{pdfpages}
+%\usepackage{newpxtext,newpxmath}
+\usepackage{pgf}
+\usepackage[total={17cm,25cm}, top=3cm, includefoot]{geometry}
+
+
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{longtable,booktabs}
+\usepackage{fixltx2e}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{lmodern}
+\usepackage{fancyhdr}
+\urlstyle{same}
+ 
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\includegraphics[width=5cm]{/home/roman/logo.png}}
+\rhead{$title-meta$}
+\rfoot{Page \thepage}
+\lfoot{\date{\today}}
+
+
+
+\fi
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath}
+}{}
+
+
+
+
+
+\title{$title$}
+
+$if(subtitle)$
+\providecommand{\subtitle}[1]{}
+\subtitle{$subtitle$}
+$endif$
+
+\author{$for(author)$$author$$sep$ \and $endfor$}
+\date{$date$}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%\thispagestyle{empty}
+\maketitle
+
+\begin{abstract}
+$abstract$
+
+\end{abstract}
+
+\begin{figure} [htbp]
+\begin{center}
+%\includegraphics [width=100mm] {%(TopImage)s} 
+\end{center}
+\end{figure}
+
+\begin{figure} [b]
+%\includegraphics [width=25mm] {%(qr)s} 
+\end{figure}
+
+\newpage
+\tableofcontents
+%$QR$
+
+
+$body$
+
+
+\end{document}

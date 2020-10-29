@@ -1,0 +1,189 @@
+body {
+padding-top: 20pt;
+padding-bottom: 40pt;
+background-color: #FFF;
+
+font-family: "Roboto";
+font-style: normal;
+font-variant: normal;
+font-weight: 400;
+text-decoration: none;
+}
+
+.header{
+	z-index: 10;
+	padding-top: 10pt;
+	background: white;
+	width: 100%;
+	top: 0pt;
+}
+
+.header li a{
+margin-right: 10pt;
+text-decoration: none;
+font-family: Roboto, sans-serif;
+font-size: 13pt;
+line-height: 20pt;
+color: #444444;
+}
+
+.header li a:hover{
+border-bottom: 3px solid #000;
+color: #000;
+}
+.header li a .active{
+border-bottom: 3px solid #000;
+font-weight: bold;
+color: #000;
+}
+
+.submenu:hover .submenu_show{
+	display: block;
+}
+
+.submenu_show{
+	display: none;
+}
+
+.submenu ul{
+	position: absolute;
+	background: white;
+	list-style: none;
+	padding: 10pt;
+}
+
+.card-deck .card{
+margin: 0px;
+margin-bottom: 15px;
+}
+
+img {
+opacity: 1;
+transition: opacity .3s ease-in;
+} 
+
+.status{
+min-height: 0.75em;
+height: 0.75em;
+width: 100%;
+}
+
+.status-0{
+background-color: #d7ccc8;
+}
+.status-1{
+background-color: #ffeb3b;
+}
+
+.status-2{
+background-color: #8bc34a;
+}
+
+.status-3{
+background-color: #ffc107;
+}
+
+.status-4{
+background-color: #f44336;
+}
+
+.carousel-header{
+	left: 10%;
+	right: auto;
+	color: black;
+	top: 50pt;
+	margin:auto;
+}
+
+.carousel-indicators{
+	bottom: 60pt;
+}
+
+.header-home{
+height: 50pt;
+width: 100%;
+background-color: rgba(255,255,255,0.95);
+position: fixed;
+top: 0px;
+z-index: 2;
+padding-left: 20pt;
+padding-right: 20pt;
+
+}
+
+.home_shopping_element{
+
+	margin: 10pt;
+	padding: 10pt;
+	background-color: rgba(255,255,255,0.98);
+	min-height: 50pt;
+
+}
+
+.home_static_background{
+max-width:100%;
+max-height:100%;
+width:100%;
+background-repeat: no-repeat;
+background-attachment: fixed;
+background-position: center center;
+
+background-size: center 100%; 
+
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+background-size: cover !important;
+
+}
+.module-card:hover{
+	background-color: white;
+}
+
+.module-card:hover{
+	background-color: #8bc34a;
+	transition: 500ms;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.feature-describe{
+	color: #9E9E9E;
+	transition: 500ms;
+	padding: 15pt;
+}
+
+h3.feature-describe{
+	color: #777;
+	transition: 500ms;
+	padding-bottom: 0pt;
+}
+
+img.feature-describe{
+	opacity: 0.6;
+}
+
+
+.feature-describe:hover {
+	opacity: 1;
+	color: black;
+	transition: 500ms;
+}
+
+    .wow:first-child {
+      visibility: hidden;
+    }
+
+.home-card-text{
+	margin: 10pt;
+	color: black;
+	text-decoration: none;
+}
+a .home-card-text{
+	text-decoration: none;
+}
+.card a:hover{
+	text-decoration: none;
+}
